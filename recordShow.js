@@ -53,12 +53,12 @@ function initializeApp(data) {
       });
 
       response.data.records[0].forEach((element, index) => {
-        if(element[0] === "") {
+        if(element === "") {
           //empty data
           if(tableRowNum === 0) tableRowNum = index + 1;
         } else {
           //parse user string
-          userArray.push(element[0]);
+          userArray.push(element);
         }
       });
 
