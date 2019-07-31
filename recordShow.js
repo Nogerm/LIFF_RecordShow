@@ -19,6 +19,83 @@ window.onload = function (e) {
       //show/hide element
       let div_loading = document.getElementById("loading");
       div_loading.className = "ui inverted dimmer";
+
+      //test by fake data
+      let fakeData = {
+        status: 200,
+        groupName: "GroupName",
+        recordDate:[
+          ["2019-07-06T16:00"],
+          ["2019-07-13T16:00"],
+          ["2019-07-19T16:00"],
+          ["2019-07-20T16:00"],
+          ["2019-07-27T16:00"],
+          [""]
+        ],
+        records: [
+          ["Name", "Name", "Name", "Name", "Name", "Name", "Name"],
+          ["V", "", "V", "", "", "", "V"],
+          ["V", "", "V", "", "", "", "V"],
+          ["V", "", "V", "", "", "", "V"],
+          ["V", "", "V", "", "", "", "V"],
+          ["V", "", "V", "", "", "", "V"],
+          ["", "", ""]
+        ]
+      }
+
+      let tableColumnNum = undefined;
+      let tableRowNum = undefined;
+      let dateArray = [];
+      let userArray = [];
+
+      fakeData.recordDate.forEach((element, index) => {
+        if(element[0] === "") {
+          //empty data
+          if(tableColumnNum === undefined) tableColumnNum = index + 1;
+        } else {
+          //parse Date string
+          dateArray.push(element[0].split('T')[0]);
+        }
+      });
+      if(tableColumnNum === undefined) tableColumnNum = dateArray.length + 1;
+
+      fakeData.records[0].forEach((element, index) => {
+        if(element === "") {
+          //empty data
+          if(tableRowNum === undefined) tableRowNum = index;
+        } else {
+          //parse user string
+          userArray.push(element);
+        }
+      });
+      if(tableRowNum === undefined) tableRowNum = userArray.length;
+
+      //generate table header
+      let table = document.getElementById("userTable");
+      let header = table.createTHead();
+      let row1 = header.insertRow(0);
+      let cell1_row1 = row1.insertCell(0);
+      cell1_row1.innerHTML = "<h2>" + fakeData.groupName + "</h1>"; 
+      cell1_row1.colSpan = tableColumnNum;
+
+      let row2 = header.insertRow(1);
+      let cell1_row2 = row2.insertCell(0);
+      cell1_row2.innerHTML = "<p>組員</p>";
+      for(let i = 1; i < tableColumnNum; i++) {
+        let cell_row2 = row2.insertCell(i);
+        cell_row2.innerHTML = "<p>" + dateArray[i - 1] + "</p>";
+      }
+
+
+      //generate table body
+      let body = table.createTBody();
+      for(let i = 0; i < tableRowNum; i++) {
+        let row = body.insertRow(i);
+        for(let j = 0; j < tableColumnNum; j++) {
+          let cell = row.insertCell(j);
+          if(j === 0) cell.innerHTML = "<td>" + userArray[i] + "</td>";
+        }
+      }
     }
   );
 };
