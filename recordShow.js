@@ -85,7 +85,7 @@ function initializeApp(data) {
         let row = body.insertRow(i);
         for(let j = 0; j < tableColumnNum; j++) {
           let cell = row.insertCell(j);
-          if(j === 0) cell.innerHTML = "<td>" + userArray[j] + "</td>";
+          if(j === 0) cell.innerHTML = "<td>" + userArray[i] + "</td>";
         }
       }
       
