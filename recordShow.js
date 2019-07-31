@@ -70,7 +70,7 @@ function initializeApp(data) {
       let row1 = header.insertRow(0);
       let cell1_row1 = row1.insertCell(0);
       cell1_row1.innerHTML = "<h2>" + response.data.groupName + "</h1>"; 
-      cell1_row1.colSpan = 2;
+      cell1_row1.colSpan = tableColumnNum;
 
       let row2 = header.insertRow(1);
       let cell1_row2 = row2.insertCell(0);
