@@ -52,7 +52,7 @@ function initializeApp(data) {
         }
       });
 
-      response.data.records.forEach((element, index) => {
+      response.data.records[0].forEach((element, index) => {
         if(element[0] === "") {
           //empty data
           if(tableRowNum === 0) tableRowNum = index + 1;
