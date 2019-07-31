@@ -37,8 +37,32 @@ function initializeApp(data) {
     if(response.data.status === 200) {
       alert(JSON.stringify(response.data));
 
-      const tableColumnNum = response.data.records[0].length;
-      const tableBodyRowNum = response.data.records/length;
+      let tableColumnNum = 0;
+      let tableRowNum = 0;
+      let dateArray = [];
+      let userArray = [];
+
+      response.data.recordDate.forEach((element, index) => {
+        if(element[0] === "") {
+          //empty data
+          if(tableColumnNum === 0) tableColumnNum = index + 1;
+        } else {
+          //parse Date string
+          dateArray.push(element[0].split('T')[0]);
+        }
+      });
+
+      response.data.records.forEach((element, index) => {
+        if(element[0] === "") {
+          //empty data
+          if(tableRowNum === 0) tableRowNum = index + 1;
+        } else {
+          //parse user string
+          userArray.push(element[0]);
+        }
+      });
+
+      alert("dateArray: " + dateArray + "\nuserArray" + userArray);
 
       //generate table header
       let table = document.getElementById("userTable");
