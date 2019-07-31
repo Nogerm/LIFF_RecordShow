@@ -41,6 +41,7 @@ function initializeApp(data) {
       const tableBodyRowNum = response.data.records/length;
 
       //update value
+      /*
       let div_group_name  = document.getElementById("groupName");
       reportGroup = response.data.groupName;
       reportTimeStr = timeStampToString(response.data.eventTime[response.data.eventTime.length - 1]);
@@ -53,7 +54,7 @@ function initializeApp(data) {
         let cell_check = row.insertCell(1);
         cell_name.innerHTML = "<td>" + name + "</td>";
         cell_check.innerHTML = "<div class=\"ui checkbox\">\n <input type=\"checkbox\">\n <label>出席狀況</label>\n </div>\n </td>"; 
-      });
+      });*/
     } else {
       alert(response.data.message);
     }
