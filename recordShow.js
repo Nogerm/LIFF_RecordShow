@@ -40,6 +40,20 @@ function initializeApp(data) {
       const tableColumnNum = response.data.records[0].length;
       const tableBodyRowNum = response.data.records/length;
 
+      //generate table header
+      let table = document.getElementById("userTable");
+      let header = table.createTHead();
+      let row1 = header.insertRow(0);
+      let cell1_row1 = row1.insertCell(0);
+      cell1_row1.innerHTML = "<h2>" + response.data.groupName + "</h1>"; 
+
+      let row2 = header.insertRow(1);
+      let cell1_row2 = row2.insertCell(0);
+      cell1_row2.innerHTML = "<p>組員</p>";
+      let cell2_row2 = row2.insertCell(1);
+      cell2_row2.innerHTML = "<p>出席狀況</p>";
+
+
       //update value
       /*
       let div_group_name  = document.getElementById("groupName");
@@ -47,7 +61,7 @@ function initializeApp(data) {
       reportTimeStr = timeStampToString(response.data.eventTime[response.data.eventTime.length - 1]);
       div_group_name.textContent = reportGroup + ' - ' + reportTimeStr;
 
-      let table = document.getElementById("userTable");
+      
       response.data.groupMembers[0].forEach((name, index) => {
         let row = table.insertRow(index + HeaderRowNum);
         let cell_name  = row.insertCell(0);
