@@ -152,8 +152,10 @@ function initializeApp(data) {
       let row2 = header.insertRow(1);
       let cell1_row2 = row2.insertCell(0);
       cell1_row2.innerHTML = "<p>組員</p>";
-      let cell2_row2 = row2.insertCell(1);
-      cell2_row2.innerHTML = "<p>出席狀況</p>";
+      for(let i = 1; i < tableColumnNum; i++) {
+        let cell_row2 = row2.insertCell(i);
+        cell_row2.innerHTML = "<p>" + dateArray[i - 1] + "</p>";
+      }
 
 
       //generate table body
