@@ -55,7 +55,7 @@ function initializeApp(data) {
       response.data.records[0].forEach((element, index) => {
         if(element === "") {
           //empty data
-          if(tableRowNum === 0) tableRowNum = index + 1;
+          if(tableRowNum === 0) tableRowNum = index;
         } else {
           //parse user string
           userArray.push(element);
@@ -79,14 +79,17 @@ function initializeApp(data) {
       cell2_row2.innerHTML = "<p>出席狀況</p>";
 
 
-      //update value
-      /*
-      let div_group_name  = document.getElementById("groupName");
-      reportGroup = response.data.groupName;
-      reportTimeStr = timeStampToString(response.data.eventTime[response.data.eventTime.length - 1]);
-      div_group_name.textContent = reportGroup + ' - ' + reportTimeStr;
-
+      //generate table body
+      let body = table.createTBody();
+      for(let i = 0; i < tableRowNum; i++) {
+        let row = body.insertRow(i);
+        for(let j = 0; j < tableColumnNum; j++) {
+          let cell = row.insertCell(j);
+          if(j === 0) cell.innerHTML = "<td>" + userArray[j] + "</td>";
+        }
+      }
       
+      /*
       response.data.groupMembers[0].forEach((name, index) => {
         let row = table.insertRow(index + HeaderRowNum);
         let cell_name  = row.insertCell(0);
