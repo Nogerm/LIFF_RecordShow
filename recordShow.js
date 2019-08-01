@@ -51,13 +51,13 @@ window.onload = function (e) {
       fakeData.recordDate.forEach((element, index) => {
         if(element[0] === "") {
           //empty data
-          if(tableColumnNum === undefined) tableColumnNum = index + 1;
+          if(tableColumnNum === undefined) tableColumnNum = index;
         } else {
           //parse Date string
           dateArray.push(element[0].split('T')[0]);
         }
       });
-      if(tableColumnNum === undefined) tableColumnNum = dateArray.length + 1;
+      if(tableColumnNum === undefined) tableColumnNum = dateArray.length;
 
       fakeData.records[0].forEach((element, index) => {
         if(element === "") {
@@ -71,31 +71,38 @@ window.onload = function (e) {
       if(tableRowNum === undefined) tableRowNum = userArray.length;
 
       //generate table header
-      let table = document.getElementById("userTable");
-      let header = table.createTHead();
+      let tableHead = document.getElementById("tableHead");
+      let header = tableHead.createTHead();
       let row1 = header.insertRow(0);
       let cell1_row1 = row1.insertCell(0);
       cell1_row1.innerHTML = "<h2>" + fakeData.groupName + "</h1>"; 
-      cell1_row1.colSpan = tableColumnNum;
 
-      let row2 = header.insertRow(1);
-      let cell1_row2 = row2.insertCell(0);
-      cell1_row2.innerHTML = "<p>組員</p>";
-      for(let i = 1; i < tableColumnNum; i++) {
-        let cell_row2 = row2.insertCell(i);
-        cell_row2.innerHTML = "<p>" + dateArray[i - 1] + "</p>";
+      //generate table name
+      let tableName = document.getElementById("tableName");
+      let nameBody = tableName.createTBody();
+      let nameTitleRow = nameBody.insertRow(0);
+      nameTitleRow.style.height = "10vh";
+      let nameCell = nameTitleRow.insertCell(0);
+      nameCell.innerHTML = "<p>組員</p>";
+      for(let i = 1; i <= tableRowNum; i++) {
+        let row = nameBody.insertRow(i);
+        row.style.height = "10vh";
+        let cell = row.insertCell(0);
+        cell.innerHTML = "<td>" + userArray[i - 1] + "</td>";
       }
 
-
-      //generate table body
-      let body = table.createTBody();
-      for(let i = 0; i < tableRowNum; i++) {
-        let row = body.insertRow(i);
+      //generate table data
+      let tableData = document.getElementById("tableData");
+      let dataBody = tableData.createTBody();
+      for(let i = 0; i < tableRowNum + 1; i++) {
+        let dataTitleRow = dataBody.insertRow(0);
+        dataTitleRow.style.height = "10vh";
         for(let j = 0; j < tableColumnNum; j++) {
-          let cell = row.insertCell(j);
-          if(j === 0) cell.innerHTML = "<td>" + userArray[i] + "</td>";
+          let cell = dataTitleRow.insertCell(j);
+          if(i === tableRowNum) cell.innerHTML = "<p>" + dateArray[j] + "</p>";
         }
       }
+
     }
   );
 };
@@ -128,6 +135,7 @@ function initializeApp(data) {
           dateArray.push(element[0].split('T')[0]);
         }
       });
+      if(tableColumnNum === undefined) tableColumnNum = dateArray.length + 1;
 
       response.data.records[0].forEach((element, index) => {
         if(element === "") {
@@ -138,44 +146,43 @@ function initializeApp(data) {
           userArray.push(element);
         }
       });
+      if(tableRowNum === undefined) tableRowNum = userArray.length;
 
       alert("dateArray: " + dateArray + "\nuserArray" + userArray);
 
       //generate table header
-      let table = document.getElementById("userTable");
-      let header = table.createTHead();
+      let tableHead = document.getElementById("tableHead");
+      let header = tableHead.createTHead();
       let row1 = header.insertRow(0);
       let cell1_row1 = row1.insertCell(0);
-      cell1_row1.innerHTML = "<h2>" + response.data.groupName + "</h1>"; 
-      cell1_row1.colSpan = tableColumnNum;
+      cell1_row1.innerHTML = "<h2>" + fakeData.groupName + "</h1>"; 
 
-      let row2 = header.insertRow(1);
-      let cell1_row2 = row2.insertCell(0);
-      cell1_row2.innerHTML = "<p>組員</p>";
-      for(let i = 1; i < tableColumnNum; i++) {
-        let cell_row2 = row2.insertCell(i);
-        cell_row2.innerHTML = "<p>" + dateArray[i - 1] + "</p>";
+      //generate table name
+      let tableName = document.getElementById("tableName");
+      let nameBody = tableName.createTBody();
+      let nameTitleRow = nameBody.insertRow(0);
+      nameTitleRow.style.height = "10vh";
+      let nameCell = nameTitleRow.insertCell(0);
+      nameCell.innerHTML = "<p>組員</p>";
+      for(let i = 1; i <= tableRowNum; i++) {
+        let row = nameBody.insertRow(i);
+        row.style.height = "10vh";
+        let cell = row.insertCell(0);
+        cell.innerHTML = "<td>" + userArray[i - 1] + "</td>";
       }
 
-
-      //generate table body
-      let body = table.createTBody();
-      for(let i = 0; i < tableRowNum; i++) {
-        let row = body.insertRow(i);
+      //generate table data
+      let tableData = document.getElementById("tableData");
+      let dataBody = tableData.createTBody();
+      for(let i = 0; i < tableRowNum + 1; i++) {
+        let dataTitleRow = dataBody.insertRow(0);
+        dataTitleRow.style.height = "10vh";
         for(let j = 0; j < tableColumnNum; j++) {
-          let cell = row.insertCell(j);
-          if(j === 0) cell.innerHTML = "<td>" + userArray[i] + "</td>";
+          let cell = dataTitleRow.insertCell(j);
+          if(i === tableRowNum) cell.innerHTML = "<p>" + dateArray[j] + "</p>";
         }
       }
-      
-      /*
-      response.data.groupMembers[0].forEach((name, index) => {
-        let row = table.insertRow(index + HeaderRowNum);
-        let cell_name  = row.insertCell(0);
-        let cell_check = row.insertCell(1);
-        cell_name.innerHTML = "<td>" + name + "</td>";
-        cell_check.innerHTML = "<div class=\"ui checkbox\">\n <input type=\"checkbox\">\n <label>出席狀況</label>\n </div>\n </td>"; 
-      });*/
+
     } else {
       alert(response.data.message);
     }

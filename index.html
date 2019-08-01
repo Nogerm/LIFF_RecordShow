@@ -32,11 +32,24 @@
     <div id="loading" class="ui active inverted dimmer">
       <div class="ui text loader">Loading</div>
     </div>
-    <div id="content" class="ui scrolling content" style="margin-top: 0px; display: flex; height: 100%;">
-      <div class="ui segment" style="flex:1;">
-        <table class="ui celled structured table unstackable" id="userTable">
-        </table>
+      <div class="ui equal width center aligned grid">
+        <div class="row" style="height:64px">
+          <table class="ui celled structured table unstackable" id="tableHead">
+          </table>
+        </div>
+        <div class="row" style="padding: 0px">
+          <div class="column" style="padding: 0px">
+            <table class="ui table unstackable" id="tableName">
+            </table>
+          </div>
+          <div class="black scrolling column" style="padding: 0px;margin: 0px">
+            <div id="content" class="ui scrolling content" style="margin-top: 0px; display: flex; height: 100%; overflow-y: auto">
+              <table class="ui table unstackable" id="tableData">
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+
   </body>
 </html>
