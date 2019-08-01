@@ -155,7 +155,7 @@ function initializeApp(data) {
       let header = tableHead.createTHead();
       let row1 = header.insertRow(0);
       let cell1_row1 = row1.insertCell(0);
-      cell1_row1.innerHTML = "<h2>" + fakeData.groupName + "</h1>"; 
+      cell1_row1.innerHTML = "<h2>" + response.data.groupName + "</h1>"; 
 
       //generate table name
       let tableName = document.getElementById("tableName");
