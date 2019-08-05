@@ -1,5 +1,5 @@
 const hostURL = "https://script.google.com/macros/s/AKfycbyQwaNfRrnyBB4kCOvdMgUw_o6v8Z_lNUDqjNCT5Uo-dPKBvZ0/exec";
-const HeaderRowNum = 2;
+const HeaderRowNum = 3;
 
 var reportTimeStr = "";
 var reportGroup = "";
@@ -175,10 +175,10 @@ function initializeApp(data) {
       prev3.innerHTML = prevText3;
 
       //update table data
-      let tableBody = document.getElementById("tableBody");
+      let table = document.getElementById("userTable");
       const stateArray =  response.data.records[tableColumnNum];
       stateArray.forEach((state, index) => {
-        let row = tableBody.insertRow(index + HeaderRowNum);
+        let row = table.insertRow(index + HeaderRowNum);
         let cell_name  = row.insertCell(0);
         let cell_check = row.insertCell(1);
         cell_name.innerHTML = "<td>" + userArray[index] + "</td>";
