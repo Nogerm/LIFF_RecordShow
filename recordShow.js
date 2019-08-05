@@ -149,7 +149,7 @@ function initializeApp(data) {
       });
       if(tableRowNum === undefined) tableRowNum = userArray.length;
 
-      alert("dateArray: " + dateArray + "\nuserArray" + userArray);
+      alert("tableColumnNum" + tableColumnNum + "\ndateArray: " + dateArray + "\nuserArray" + userArray);
 
       //update table
       let groupName = document.getElementById("groupName");
