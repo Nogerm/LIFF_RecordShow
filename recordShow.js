@@ -130,13 +130,13 @@ function initializeApp(data) {
       response.data.recordDate.forEach((element, index) => {
         if(element[0] === "") {
           //empty data
-          if(tableColumnNum === 0) tableColumnNum = index + 1;
+          if(tableColumnNum === 0) tableColumnNum = index;
         } else {
           //parse Date string
           dateArray.push(element[0].split('T')[0]);
         }
       });
-      if(tableColumnNum === undefined) tableColumnNum = dateArray.length + 1;
+      if(tableColumnNum === undefined) tableColumnNum = dateArray.length;
 
       response.data.records[0].forEach((element, index) => {
         if(element === "") {
