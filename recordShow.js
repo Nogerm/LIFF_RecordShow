@@ -70,38 +70,39 @@ window.onload = function (e) {
       });
       if(tableRowNum === undefined) tableRowNum = userArray.length;
 
-      //generate table header
-      let tableHead = document.getElementById("tableHead");
-      let header = tableHead.createTHead();
-      let row1 = header.insertRow(0);
-      let cell1_row1 = row1.insertCell(0);
-      cell1_row1.innerHTML = "<h2>" + fakeData.groupName + "</h1>"; 
+      //update table
+      let groupName = document.getElementById("groupName");
+      groupName.innerHTML = "<h2 id=\"groupName\">" + fakeData.groupName + "</h1>";
 
-      //generate table name
-      let tableName = document.getElementById("tableName");
-      let nameBody = tableName.createTBody();
-      let nameTitleRow = nameBody.insertRow(0);
-      nameTitleRow.style.height = "10vh";
-      let nameCell = nameTitleRow.insertCell(0);
-      nameCell.innerHTML = "<p>組員</p>";
-      for(let i = 1; i <= tableRowNum; i++) {
-        let row = nameBody.insertRow(i);
-        row.style.height = "10vh";
-        let cell = row.insertCell(0);
-        cell.innerHTML = "<td>" + userArray[i - 1] + "</td>";
-      }
+      //update tab text
+      let prev0 = document.getElementById("prev0");
+      const prevText0 = dateArray[tableColumnNum -1].substring(5);
+      prev0.innerHTML = prevText0;
+      prev0.className = "active item";
 
-      //generate table data
-      let tableData = document.getElementById("tableData");
-      let dataBody = tableData.createTBody();
-      for(let i = 0; i < tableRowNum + 1; i++) {
-        let dataTitleRow = dataBody.insertRow(0);
-        dataTitleRow.style.height = "10vh";
-        for(let j = 0; j < tableColumnNum; j++) {
-          let cell = dataTitleRow.insertCell(j);
-          if(i === tableRowNum) cell.innerHTML = "<p>" + dateArray[j] + "</p>";
-        }
-      }
+      let prev1 = document.getElementById("prev1");
+      const prevText1 = dateArray[tableColumnNum -2].substring(5);
+      prev1.innerHTML = prevText1;
+
+      let prev2 = document.getElementById("prev2");
+      const prevText2 = dateArray[tableColumnNum -3].substring(5);
+      prev2.innerHTML = prevText2;
+
+      let prev3 = document.getElementById("prev3");
+      const prevText3 = dateArray[tableColumnNum -4].substring(5);
+      prev3.innerHTML = prevText3;
+
+      //update table data
+      let tableBody = document.getElementById("tableBody");
+      const stateArray =  fakeData.records[tableColumnNum];
+      stateArray.forEach((state, index) => {
+        let row = tableBody.insertRow(index + HeaderRowNum);
+        let cell_name  = row.insertCell(0);
+        let cell_check = row.insertCell(1);
+        cell_name.innerHTML = "<td>" + userArray[index] + "</td>";
+        if(state === "V") cell_check.innerHTML = "<td class=\"center aligned\"><i class=\"large green checkmark icon\"></i></td>";
+        else cell_check.innerHTML = "<td></td>";
+      });
 
     }
   );

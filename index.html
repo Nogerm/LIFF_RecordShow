@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>出席狀況V0.013</title>
+    <title>出席狀況V0.014</title>
   
     <script src="https://d.line-scdn.net/liff/1.0/sdk.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
@@ -32,24 +32,38 @@
     <div id="loading" class="ui active inverted dimmer">
       <div class="ui text loader">Loading</div>
     </div>
-      <div class="ui equal width center aligned grid">
-        <div class="row" style="height:64px">
-          <table class="ui celled structured table unstackable" id="tableHead">
-          </table>
-        </div>
-        <div class="row" style="padding: 0px">
-          <div class="column" style="padding: 0px">
-            <table class="ui table unstackable" id="tableName">
-            </table>
-          </div>
-          <div class="black scrolling column" style="padding: 0px;margin: 0px">
-            <div id="content" class="ui scrolling content" style="margin-top: 0px; display: flex; height: 100%; overflow-y: auto">
-              <table class="ui table unstackable" id="tableData">
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-
+    <div id="content" class="ui segment" style="margin-top: 0px; display: flex; height: 100%;">
+      <table class="ui celled structured table unstackable" id="userTable">
+        <thead>
+          <tr>
+            <th colspan="2" class="ui center aligned">
+              <h2 id="groupName">小組名稱</h1>
+            </th>
+          </tr>
+          <tr>
+            <th colspan="2">
+              <div class="ui right floated pagination menu">
+                <a class="icon item">
+                  <i class="left chevron icon"></i>
+                </a>
+                <a class="item" id="prev3">1</a>
+                <a class="item" id="prev2">2</a>
+                <a class="item" id="prev1">3</a>
+                <a class="item" id="prev0">4</a>
+                <a class="icon item">
+                  <i class="right chevron icon"></i>
+                </a>
+              </div>
+            </th>
+          </tr>
+          <tr>
+            <th class="eight wide">組員</th>
+            <th>出席狀況</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+        </tbody>
+      </table>
+    </div>
   </body>
 </html>
