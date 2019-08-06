@@ -158,7 +158,6 @@ function initializeApp(data) {
       //update tab text
       let prev0 = document.getElementById("prev0");
       const prevText0 = dateArray[tableColumnNum -1].substring(5);
-      alert("prevText0" + prevText0);
       prev0.innerHTML = prevText0;
       prev0.className = "active item";
 
