@@ -1,0 +1,34 @@
+th, td {
+    white-space: nowrap;
+    border:1px #cccccc solid;
+    padding: 8px;
+    height: 50px;
+}
+
+.first-col {
+    position: absolute;
+    width: 30vw;
+    margin-left: -30vw;
+    text-align: center;
+}
+
+.container {
+    width: 100%
+}
+
+.table {
+    border-collapse: collapse;
+}
+
+.table-wrapper {
+    overflow-x: scroll;
+    width: 64vw;
+    margin: 0 3vw 3vw 33vw;
+}
+
+.head-bar {
+    border:1px #cccccc solid;
+    padding: 8px;
+    margin: 3vw 3vw 0 3vw;
+    text-align: center;
+}

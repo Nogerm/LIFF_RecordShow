@@ -33,36 +33,14 @@
     <div id="loading" class="ui active inverted dimmer">
       <div class="ui text loader">Loading</div>
     </div>
-    <div id="content" class="ui segment" style="margin-top: 0px; display: flex; height: 100%;">
-      <table class="ui celled structured table unstackable" id="userTable">
-        <thead>
-          <tr>
-            <th colspan="2" class="ui center aligned">
-              <h2 id="groupName">小組名稱</h1>
-            </th>
-          </tr>
-          <tr>
-            <th colspan="2">
-              <div style="display: flex;flex-direction: row;justify-content:center;">
-                <div style="overflow-y: auto;">
-                  <div class="ui right floated pagination menu">
-                    <a class="item" id="prev3" style="min-width:70px;">1</a>
-                    <a class="item" id="prev2" style="min-width:70px;">2</a>
-                    <a class="item" id="prev1" style="min-width:70px;">3</a>
-                    <a class="item" id="prev0" style="min-width:70px;">4</a>
-                  </div>
-                </div>
-              </div>
-            </th>
-          </tr>
-          <tr>
-            <th class="eight wide">組員</th>
-            <th>出席狀況</th>
-          </tr>
-        </thead>
-        <tbody id="tableBody">
-        </tbody>
-      </table>
+    <div class="container">
+      <div class="head-bar">
+        <h1 id="groupName">Group Name</h1>
+      </div>
+      <div class="table-wrapper">
+        <table class="table" id="userTable">
+        </table>
+      </div>
     </div>
   </body>
 </html>
