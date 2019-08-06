@@ -93,10 +93,10 @@ window.onload = function (e) {
       prev3.innerHTML = prevText3;
 
       //update table data
-      let tableBody = document.getElementById("tableBody");
+      let table = document.getElementById("userTable");
       const stateArray =  fakeData.records[tableColumnNum];
       stateArray.forEach((state, index) => {
-        let row = tableBody.insertRow(index + HeaderRowNum);
+        let row = table.insertRow(index + HeaderRowNum);
         let cell_name  = row.insertCell(0);
         let cell_check = row.insertCell(1);
         cell_name.innerHTML = "<td>" + userArray[index] + "</td>";
