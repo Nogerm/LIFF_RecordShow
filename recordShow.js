@@ -14,13 +14,18 @@ window.onload = function (e) {
     },
     err => {
       // LIFF initialization failed
-      alert("init fail");
+      swal.fire(
+        'Failed',
+        'LIFF init fail',
+        'error'
+      );
 
       //show/hide element
       let div_loading = document.getElementById("loading");
       div_loading.className = "ui inverted dimmer";
 
       //test by fake data
+      /*
       let fakeData = {
         status: 200,
         groupName: "GroupName",
@@ -102,6 +107,7 @@ window.onload = function (e) {
           }
         }
       }
+      */
     }
   );
 };
@@ -118,7 +124,7 @@ function initializeApp(data) {
     div_loading.className = "ui inverted dimmer";
 
     if(response.data.status === 200) {
-      //alert(JSON.stringify(response.data));
+      //Swal.fire(JSON.stringify(response.data));
 
       let tableColumnNum = 0;
       let tableRowNum = 0;
@@ -147,7 +153,7 @@ function initializeApp(data) {
       });
       if(tableRowNum === undefined) tableRowNum = userArray.length;
 
-      //alert("tableColumnNum" + tableColumnNum + "\ndateArray: " + dateArray + "\nuserArray" + userArray);
+      //Swal.fire("tableColumnNum" + tableColumnNum + "\ndateArray: " + dateArray + "\nuserArray" + userArray);
 
       //update group name
       let groupName = document.getElementById("groupName");
@@ -183,13 +189,21 @@ function initializeApp(data) {
       }
 
     } else {
-      alert(response.data.message);
+      swal.fire(
+        '錯誤',
+        response.data.message,
+        'error'
+      );
     }
   })
   .catch(error => {
     // Error
     console.log(error);
-    alert(error);
+    swal.fire(
+      '錯誤',
+      error,
+      'error'
+    );
   });
 }
 
