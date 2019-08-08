@@ -15,17 +15,25 @@ window.onload = function (e) {
     err => {
       // LIFF initialization failed
       swal.fire(
-        'Failed',
-        'LIFF init fail',
+        '錯誤',
+        'LIFF視窗初始化失敗',
         'error'
       );
+      swal.fire({
+        title: '錯誤',
+        text: 'LIFF視窗初始化失敗',
+        type: 'error',
+        onClose: () => {
+          //liff.closeWindow();
+        }
+      });
 
       //show/hide element
       let div_loading = document.getElementById("loading");
       div_loading.className = "ui inverted dimmer";
 
       //test by fake data
-      /*
+      
       let fakeData = {
         status: 200,
         groupName: "GroupName",
@@ -75,19 +83,20 @@ window.onload = function (e) {
       });
       if(tableRowNum === undefined) tableRowNum = userArray.length;
 
-      //update group name
-      let groupName = document.getElementById("groupName");
-      groupName.innerHTML = "<h2 id=\"groupName\">" + fakeData.groupName + "</h1>";
-
       //create table header
       let table = document.getElementById("userTable");
       let header = table.createTHead();
+      //let groupNameRow = header.insertRow(0);
+      //let th = document.createElement('th');
+      //th.innerHTML = "<h2 id=\"groupName\">" + fakeData.groupName + "</h1>";
+      //th.colSpan = tableColumnNum + 1;
+      //groupNameRow.appendChild(th);
       let headerRow = header.insertRow(0);
       const firstRow = ["組員", ...dateArray];
-      firstRow.forEach((vlaue, index) => {
-        let headerCell = headerRow.insertCell(index);
-        headerCell.innerHTML = "<td>" + vlaue + "</td>";
-        if(index === 0) headerCell.className = "first-col";
+      firstRow.forEach((vlaue) => {
+        let th = document.createElement('th');
+        th.innerHTML = vlaue;
+        headerRow.appendChild(th);
       }); 
 
       //create table body
@@ -95,19 +104,20 @@ window.onload = function (e) {
       for(let idx_row = 0; idx_row < tableRowNum; idx_row++) {
         let bodyRow = body.insertRow(idx_row);
         for(let idx_column = 0; idx_column <= tableColumnNum; idx_column++) {
-          let bodyCell  = bodyRow.insertCell(idx_column);
           if(idx_column === 0) {
             //name column
-            bodyCell.innerHTML = "<td>" + fakeData.records[idx_column][idx_row] + "</td>";
-            bodyCell.className = "first-col";
+            let th = document.createElement('th');
+            th.innerHTML = fakeData.records[idx_column][idx_row];
+            bodyRow.appendChild(th);
           } else {
             //data column
+            let bodyCell  = bodyRow.insertCell(idx_column);
             if(fakeData.records[idx_column][idx_row] === "V") bodyCell.innerHTML = "<i class=\"large green checkmark icon\"></i>";
             else bodyCell.innerHTML = "";
           }
         }
       }
-      */
+      
     }
   );
 };
@@ -155,19 +165,20 @@ function initializeApp(data) {
 
       //Swal.fire("tableColumnNum" + tableColumnNum + "\ndateArray: " + dateArray + "\nuserArray" + userArray);
 
-      //update group name
-      let groupName = document.getElementById("groupName");
-      groupName.innerHTML = "<h2 id=\"groupName\">" + response.data.groupName + "</h1>";
-
       //create table header
       let table = document.getElementById("userTable");
       let header = table.createTHead();
+      //let groupNameRow = header.insertRow(0);
+      //let th = document.createElement('th');
+      //th.innerHTML = "<h2 id=\"groupName\">" + response.data.groupName + "</h1>";
+      //th.colSpan = tableColumnNum + 1;
+      //groupNameRow.appendChild(th);
       let headerRow = header.insertRow(0);
       const firstRow = ["組員", ...dateArray];
-      firstRow.forEach((vlaue, index) => {
-        let headerCell = headerRow.insertCell(index);
-        headerCell.innerHTML = "<td>" + vlaue + "</td>";
-        if(index === 0) headerCell.className = "first-col";
+      firstRow.forEach((vlaue) => {
+        let th = document.createElement('th');
+        th.innerHTML = vlaue;
+        headerRow.appendChild(th);
       }); 
 
       //create table body
@@ -175,13 +186,14 @@ function initializeApp(data) {
       for(let idx_row = 0; idx_row < tableRowNum; idx_row++) {
         let bodyRow = body.insertRow(idx_row);
         for(let idx_column = 0; idx_column <= tableColumnNum; idx_column++) {
-          let bodyCell  = bodyRow.insertCell(idx_column);
           if(idx_column === 0) {
             //name column
-            bodyCell.innerHTML = "<td>" + response.data.records[idx_column][idx_row] + "</td>";
-            bodyCell.className = "first-col";
+            let th = document.createElement('th');
+            th.innerHTML = response.data.records[idx_column][idx_row];
+            bodyRow.appendChild(th);
           } else {
             //data column
+            let bodyCell  = bodyRow.insertCell(idx_column);
             if(response.data.records[idx_column][idx_row] === "V") bodyCell.innerHTML = "<i class=\"large green checkmark icon\"></i>";
             else bodyCell.innerHTML = "";
           }
