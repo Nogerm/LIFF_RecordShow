@@ -24,7 +24,7 @@ window.onload = function (e) {
         text: 'LIFF視窗初始化失敗',
         type: 'error',
         onClose: () => {
-          //liff.closeWindow();
+          liff.closeWindow();
         }
       });
 
@@ -33,7 +33,7 @@ window.onload = function (e) {
       div_loading.className = "ui inverted dimmer";
 
       //test by fake data
-      
+      /*
       let fakeData = {
         status: 200,
         groupName: "GroupName",
@@ -117,7 +117,7 @@ window.onload = function (e) {
           }
         }
       }
-      
+      */
     }
   );
 };
