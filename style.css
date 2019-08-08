@@ -24,7 +24,7 @@ thead th {
   
 thead th:first-child {
     left: 0;
-    z-index: 1;
+    z-index: 2;
 }
   
 tbody th {
@@ -33,6 +33,7 @@ tbody th {
     left: 0;
     background: #FFF;
     border-right: 1px solid #CCC;
+    z-index: 1;
 }
 
 tbody td {
