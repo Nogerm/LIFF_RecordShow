@@ -4,9 +4,7 @@ table {
 }
 
 .table-wrapper {
-    
     position: relative;
-    margin: 8px;
 }
 
 td, th {
