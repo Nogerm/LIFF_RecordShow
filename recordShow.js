@@ -199,7 +199,15 @@ function initializeApp(data) {
           }
         }
       }
-
+    } else if(response.data.status === 512) {
+      swal.fire({
+        title: '沒有權限',
+        text: '請先到設定頁面，申請成為回報人員',
+        type: 'error',
+        onClose: () => {
+          liff.closeWindow();
+        }
+      });
     } else {
       swal.fire(
         '錯誤',
