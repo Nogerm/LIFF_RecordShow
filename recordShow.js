@@ -120,6 +120,11 @@ function createTableBodyByEvent(events, groupMembers) {
       }
     });
   });
+
+  //scroll to last column
+  const headerRow = table.getElementsByTagName('thead')[0];
+  const lastColumn = headerRow.children[0].children[events.length];
+  table.scrollLeft = lastColumn.offsetLeft;
 }
 
 function timeStampToString (time){
