@@ -31,100 +31,13 @@ window.onload = function (e) {
       //show/hide element
       let div_loading = document.getElementById("loading");
       div_loading.className = "ui inverted dimmer";
-
-      //test by fake data
-      /*
-      let fakeData = {
-        status: 200,
-        groupName: "GroupName",
-        recordDate:[
-          ["2019-07-06T16:00"],
-          ["2019-07-13T16:00"],
-          ["2019-07-19T16:00"],
-          ["2019-07-20T16:00"],
-          ["2019-07-27T16:00"],
-          [""]
-        ],
-        records: [
-          ["Name", "Name", "Name", "Name", "Name", "Name", "Name"],
-          ["V", "", "V", "", "", "", "V"],
-          ["V", "", "V", "", "", "", "V"],
-          ["V", "", "V", "", "", "V", "V"],
-          ["V", "", "V", "", "", "", "V"],
-          ["V", "", "V", "", "", "", "V"],
-          ["", "", ""]
-        ]
-      }
-
-      let tableColumnNum = undefined;
-      let tableRowNum = undefined;
-      let dateArray = [];
-      let userArray = [];
-
-      fakeData.recordDate.forEach((element, index) => {
-        if(element[0] === "") {
-          //empty data
-          if(tableColumnNum === undefined) tableColumnNum = index;
-        } else {
-          //parse Date string
-          dateArray.push(element[0].split('T')[0].substring(5));
-        }
-      });
-      if(tableColumnNum === undefined) tableColumnNum = dateArray.length;
-
-      fakeData.records[0].forEach((element, index) => {
-        if(element === "") {
-          //empty data
-          if(tableRowNum === undefined) tableRowNum = index;
-        } else {
-          //parse user string
-          userArray.push(element);
-        }
-      });
-      if(tableRowNum === undefined) tableRowNum = userArray.length;
-
-      //create table header
-      let table = document.getElementById("userTable");
-      let header = table.createTHead();
-      //let groupNameRow = header.insertRow(0);
-      //let th = document.createElement('th');
-      //th.innerHTML = "<h2 id=\"groupName\">" + fakeData.groupName + "</h1>";
-      //th.colSpan = tableColumnNum + 1;
-      //groupNameRow.appendChild(th);
-      let headerRow = header.insertRow(0);
-      const firstRow = ["組員", ...dateArray];
-      firstRow.forEach((vlaue) => {
-        let th = document.createElement('th');
-        th.innerHTML = vlaue;
-        headerRow.appendChild(th);
-      }); 
-
-      //create table body
-      let body = table.createTBody();
-      for(let idx_row = 0; idx_row < tableRowNum; idx_row++) {
-        let bodyRow = body.insertRow(idx_row);
-        for(let idx_column = 0; idx_column <= tableColumnNum; idx_column++) {
-          if(idx_column === 0) {
-            //name column
-            let th = document.createElement('th');
-            th.innerHTML = fakeData.records[idx_column][idx_row];
-            bodyRow.appendChild(th);
-          } else {
-            //data column
-            let bodyCell  = bodyRow.insertCell(idx_column);
-            if(fakeData.records[idx_column][idx_row] === "V") bodyCell.innerHTML = "<i class=\"large green checkmark icon\"></i>";
-            else bodyCell.innerHTML = "";
-          }
-        }
-      }
-      */
     }
   );
 };
 
 function initializeApp(data) {
   //check user permission
-  const query_url = hostURL + "?type=record&lineId=" + data.context.userId;
+  const query_url = hostURL + "?type=record_basic&lineId=" + data.context.userId;
   axios.get(query_url)
   .then(response => {
     // Success
@@ -136,69 +49,9 @@ function initializeApp(data) {
     if(response.data.status === 200) {
       //Swal.fire(JSON.stringify(response.data));
 
-      let tableColumnNum = 0;
-      let tableRowNum = 0;
-      let dateArray = [];
-      let userArray = [];
+      createTableHead(response.data.eventTime);
+      createTableBodyByEvent(response.data.eventTime, response.data.groupMembers);
 
-      response.data.recordDate.forEach((element, index) => {
-        if(element[0] === "") {
-          //empty data
-          if(tableColumnNum === 0) tableColumnNum = index;
-        } else {
-          //parse Date string
-          dateArray.push(element[0].split('T')[0].substring(5));
-        }
-      });
-      if(tableColumnNum === undefined) tableColumnNum = dateArray.length;
-
-      response.data.records[0].forEach((element, index) => {
-        if(element === "") {
-          //empty data
-          if(tableRowNum === 0) tableRowNum = index;
-        } else {
-          //parse user string
-          userArray.push(element);
-        }
-      });
-      if(tableRowNum === undefined) tableRowNum = userArray.length;
-
-      //Swal.fire("tableColumnNum" + tableColumnNum + "\ndateArray: " + dateArray + "\nuserArray" + userArray);
-
-      //create table header
-      let table = document.getElementById("userTable");
-      let header = table.createTHead();
-      //let groupNameRow = header.insertRow(0);
-      //let th = document.createElement('th');
-      //th.innerHTML = "<h2 id=\"groupName\">" + response.data.groupName + "</h1>";
-      //th.colSpan = tableColumnNum + 1;
-      //groupNameRow.appendChild(th);
-      let headerRow = header.insertRow(0);
-      const firstRow = ["組員", ...dateArray];
-      firstRow.forEach((vlaue) => {
-        let th = document.createElement('th');
-        th.innerHTML = vlaue;
-        headerRow.appendChild(th);
-      }); 
-
-      //create table body
-      let body = table.createTBody();
-      for(let idx_row = 0; idx_row < tableRowNum; idx_row++) {
-        let bodyRow = body.insertRow(idx_row);
-        for(let idx_column = 0; idx_column <= tableColumnNum; idx_column++) {
-          if(idx_column === 0) {
-            //name column
-            let th = document.createElement('th');
-            th.innerHTML = response.data.records[idx_column][idx_row];
-            bodyRow.appendChild(th);
-          } else {
-            //data column
-            let bodyCell  = bodyRow.insertCell(idx_column);
-            if(response.data.records[idx_column][idx_row] === "V") bodyCell.innerHTML = "<i class=\"large green checkmark icon\"></i>";
-            else bodyCell.innerHTML = "";
-          }
-        }
-      }
     } else if(response.data.status === 512) {
       swal.fire({
         title: '沒有權限',
@@ -224,6 +77,50 @@ function initializeApp(data) {
       error,
       'error'
     );
+  });
+}
+
+function createTableHead(events) {
+  let table = document.getElementById("userTable");
+  let header = table.createTHead();
+  let headerRow = header.insertRow(0);
+  let th = document.createElement('th');
+  th.innerHTML = "組員";
+  headerRow.appendChild(th);
+
+  events.forEach((event) => {
+    let th = document.createElement('th');
+    const timeDateStr = event.timestring.split('T')[0];
+    const timeStr = timeDateStr.split('-')[1] + '/' + timeDateStr.split('-')[2];
+    th.innerHTML = timeStr;
+    headerRow.appendChild(th);
+  }); 
+
+}
+
+function createTableBodyByEvent(events, groupMembers) {
+
+  //update table
+  let table = document.getElementById("userTable");
+  let body = table.createTBody();
+
+  groupMembers.forEach((member, idx_row) => {
+    let bodyRow = body.insertRow(idx_row);
+    eventsWithFirstColumn = [{}, ...events];
+    eventsWithFirstColumn.forEach((event, idx_column) => {
+      if(idx_column === 0) {
+        //name column
+        let th = document.createElement('th');
+        th.innerHTML = member;
+        bodyRow.appendChild(th);
+      } else {
+        //data column
+        let bodyCell  = bodyRow.insertCell(idx_column);
+        const isAtendee = event.attendee.indexOf(member) > -1 ? true : false;
+        if(isAtendee) bodyCell.innerHTML = "<i class=\"large green checkmark icon\"></i>";
+        else bodyCell.innerHTML = "";
+      }
+    });
   });
 }
 
