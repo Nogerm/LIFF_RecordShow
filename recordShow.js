@@ -90,9 +90,7 @@ function createTableHead(events) {
 
   events.forEach((event) => {
     let th = document.createElement('th');
-    const timeDateStr = event.timestring.split('T')[0];
-    const timeStr = timeDateStr.split('-')[1] + '/' + timeDateStr.split('-')[2];
-    th.innerHTML = timeStr;
+    th.innerHTML = timeStampToString(event.timestamp);
     headerRow.appendChild(th);
   }); 
 
@@ -126,11 +124,15 @@ function createTableBodyByEvent(events, groupMembers) {
 
 function timeStampToString (time){
   const datetime = new Date();
-  datetime.setTime(time * 1000);
-  const year = datetime.getFullYear();
+  const timezone_shift = 8;
+  datetime.setTime((time + (timezone_shift * 60 * 60)) * 1000);
   const month = datetime.getMonth() + 1;
   const date = datetime.getDate();
-  return year + "/" + month + "/" + date;
+
+  if(month < 10 && date < 10) return month + "/0" + date;
+  else if(month < 10 && date >= 10) return month + "/" + date;
+  else if(month >= 10 && date < 10) return month + "/0" + date;
+  else return month + "/" + date;
 }
 
 function arrayify(collection) {
