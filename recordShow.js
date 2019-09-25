@@ -292,8 +292,13 @@ function setFilter (filter) {
   console.log(JSON.stringify(filter));
 
   clearTable();
-      createTableHead(reportData.eventTime);
-      createTableBodyByEvent(reportData.eventTime, reportData.groupMembers);
+  createTableHead(reportData.eventTime);
+  createTableBodyByEvent(reportData.eventTime, reportData.groupMembers);
+
+  document.getElementById("主日").checked    = selectedFilter === "主日" ? true : false;
+  document.getElementById("小組").checked    = selectedFilter === "小組" ? true : false;
+  document.getElementById("幸福門訓").checked = selectedFilter === "幸福門訓" ? true : false;
+  document.getElementById("聖靈研習").checked = selectedFilter === "聖靈研習" ? true : false;
 }
 
 function timeStampToString (time){
