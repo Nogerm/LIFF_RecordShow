@@ -7,6 +7,17 @@ table {
     position: relative;
 }
 
+.radio-wrapper {
+    padding-left: 1em;
+    padding-right: 1em;
+    background-color: steelblue;
+    position: -webkit-sticky !important; /* for Safari */
+    position: sticky !important;
+    top: 0;
+    height: 30px;
+    z-index: 2;
+}
+
 td, th {
     padding: 0.25em;
 }
@@ -14,10 +25,11 @@ td, th {
 thead th {
     position: -webkit-sticky; /* for Safari */
     position: sticky;
-    top: 0;
+    top: 30px;
     background: steelblue;
     color: #FFF;
     min-width: 80px;
+    height: 40px;
     z-index: 1;
 }
   

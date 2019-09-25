@@ -42,6 +42,34 @@
     <div id="loading" class="ui active inverted dimmer">
       <div class="ui text loader">Loading</div>
     </div>
+    <div class="ui form radio-wrapper">
+      <div class="fields">
+        <div class="field">
+          <div class="ui radio checkbox">
+            <input type="radio" id="主日" name="rate" onclick="setFilter(this.id)" checked>
+            <label>主日</label>
+          </div>
+        </div>
+        <div class="field">
+          <div class="ui radio checkbox">
+            <input type="radio" id="小組" name="rate" onclick="setFilter(this.id)">
+            <label>小組</label>
+          </div>
+        </div>
+        <div class="field">
+          <div class="ui radio checkbox">
+            <input type="radio" id="幸福門訓" name="rate" onclick="setFilter(this.id)">
+            <label>幸福門訓</label>
+          </div>
+        </div>
+        <div class="field">
+          <div class="ui radio checkbox">
+            <input type="radio" id="聖靈研習" name="rate" onclick="setFilter(this.id)">
+            <label>聖靈研習</label>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="table-wrapper">
       <table id="userTable">
       </table>

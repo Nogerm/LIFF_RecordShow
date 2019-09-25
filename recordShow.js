@@ -3,6 +3,8 @@ const HeaderRowNum = 3;
 
 var reportTimeStr = "";
 var reportGroup = "";
+var selectedFilter = "主日";
+var reportData = {};
 
 //init
 window.onload = function (e) {
@@ -24,13 +26,151 @@ window.onload = function (e) {
         text: 'LIFF視窗初始化失敗',
         type: 'error',
         onClose: () => {
-          liff.closeWindow();
+          //liff.closeWindow();
         }
       });
 
       //show/hide element
       let div_loading = document.getElementById("loading");
       div_loading.className = "ui inverted dimmer";
+
+      let fakeData = {
+        "status": 200,
+        "userName": "吳駿偉",
+        "groupName": "駿偉小組",
+        "groupMembers": [
+            "吳駿偉",
+            "陳昱婷",
+            "柯博軒",
+            "吳奕萱",
+            "方立翔",
+            "吳紫寧",
+            "朱紘妤",
+            "陳夏恩",
+            "湯晴",
+            "王耀中",
+            "潘王安",
+            "徐彬",
+            "王柏硯",
+            "楊凱翔"
+        ],
+        "eventTime": [
+            {
+                "timestamp": 1563667200,
+                "timestring": "2019-07-20T16:00:00.000Z",
+                "type": "主日",
+                "attendee": [
+                    "柯博軒",
+                    "湯晴",
+                    "王耀中"
+                ]
+            },
+            {
+                "timestamp": 1564272000,
+                "timestring": "2019-07-27T16:00:00.000Z",
+                "type": "主日",
+                "attendee": [
+                    "陳夏恩",
+                    "朱紘妤"
+                ]
+            },
+            {
+                "timestamp": 1564876800,
+                "timestring": "2019-08-03T16:00:00.000Z",
+                "type": "主日",
+                "attendee": [
+                    "方立翔",
+                    "王耀中",
+                    "湯晴"
+                ]
+            },
+            {
+                "timestamp": 1565481600,
+                "timestring": "2019-08-10T16:00:00.000Z",
+                "type": "主日",
+                "attendee": [
+                    "吳駿偉",
+                    "陳昱婷",
+                    "柯博軒"
+                ]
+            },
+            {
+                "timestamp": 1566086400,
+                "timestring": "2019-08-17T16:00:00.000Z",
+                "type": "主日",
+                "attendee": [
+                    "吳駿偉",
+                    "陳昱婷",
+                    "柯博軒"
+                ]
+            },
+            {
+                "timestamp": 1566691200,
+                "timestring": "2019-08-24T16:00:00.000Z",
+                "type": "主日",
+                "attendee": [
+                    "吳駿偉",
+                    "柯博軒",
+                    "湯晴",
+                    "徐彬"
+                ]
+            },
+            {
+                "timestamp": 1567296000,
+                "timestring": "2019-08-31T16:00:00.000Z",
+                "type": "小組",
+                "attendee": [
+                    "吳駿偉",
+                    "陳昱婷",
+                    "陳夏恩",
+                    "朱紘妤"
+                ]
+            },
+            {
+                "timestamp": 1567900800,
+                "timestring": "2019-09-07T16:00:00.000Z",
+                "type": "幸福門訓",
+                "attendee": [
+                    "陳昱婷",
+                    "柯博軒",
+                    "湯晴",
+                    "王耀中",
+                    "潘王安"
+                ]
+            },
+            {
+                "timestamp": 1568505600,
+                "timestring": "2019-09-14T16:00:00.000Z",
+                "type": "主日",
+                "attendee": [
+                    "吳駿偉",
+                    "陳昱婷",
+                    "吳奕萱",
+                    "方立翔",
+                    "王耀中",
+                    "湯晴"
+                ]
+            },
+            {
+                "timestamp": 1569110400,
+                "timestring": "2019-09-21T16:00:00.000Z",
+                "type": "聖靈研習",
+                "attendee": [
+                    "吳駿偉",
+                    "陳昱婷",
+                    "吳奕萱",
+                    "方立翔"
+                ]
+            }
+        ]
+      }
+
+      reportData = fakeData;
+
+      clearTable();
+      createTableHead(fakeData.eventTime);
+      createTableBodyByEvent(fakeData.eventTime, fakeData.groupMembers);
+
     }
   );
 };
@@ -49,8 +189,11 @@ function initializeApp(data) {
     if(response.data.status === 200) {
       //Swal.fire(JSON.stringify(response.data));
 
-      createTableHead(response.data.eventTime);
-      createTableBodyByEvent(response.data.eventTime, response.data.groupMembers);
+      reportData = response.data;
+
+      clearTable();
+      createTableHead(reportData.eventTime);
+      createTableBodyByEvent(reportData.eventTime, reportData.groupMembers);
 
     } else if(response.data.status === 512) {
       swal.fire({
@@ -80,6 +223,10 @@ function initializeApp(data) {
   });
 }
 
+function clearTable() {
+  $("#userTable").empty();
+}
+
 function createTableHead(events) {
   let table = document.getElementById("userTable");
   let header = table.createTHead();
@@ -89,9 +236,11 @@ function createTableHead(events) {
   headerRow.appendChild(th);
 
   events.forEach((event) => {
-    let th = document.createElement('th');
-    th.innerHTML = timeStampToString(event.timestamp);
-    headerRow.appendChild(th);
+    if(event.type === selectedFilter) {
+      let th = document.createElement('th');
+      th.innerHTML = timeStampToString(event.timestamp);
+      headerRow.appendChild(th);
+    }
   }); 
 
 }
@@ -104,7 +253,8 @@ function createTableBodyByEvent(events, groupMembers) {
 
   groupMembers.forEach((member, idx_row) => {
     let bodyRow = body.insertRow(idx_row);
-    eventsWithFirstColumn = [{}, ...events];
+    let filteredEvents = events.filter(event => event.type === selectedFilter);
+    eventsWithFirstColumn = [{}, ...filteredEvents];
     eventsWithFirstColumn.forEach((event, idx_column) => {
       if(idx_column === 0) {
         //name column
@@ -122,9 +272,18 @@ function createTableBodyByEvent(events, groupMembers) {
   });
 
   //scroll to last column
-  const headerRow = table.getElementsByTagName('thead')[0];
-  const lastColumn = headerRow.children[0].children[events.length];
-  table.scrollLeft = lastColumn.offsetLeft;
+  //const headerRow = table.getElementsByTagName('thead')[0];
+  //const lastColumn = headerRow.children[0].children[events.length];
+  //table.scrollLeft = lastColumn.offsetLeft;
+}
+
+function setFilter (filter) {
+  selectedFilter = filter;
+  console.log(JSON.stringify(filter));
+
+  clearTable();
+      createTableHead(reportData.eventTime);
+      createTableBodyByEvent(reportData.eventTime, reportData.groupMembers);
 }
 
 function timeStampToString (time){
