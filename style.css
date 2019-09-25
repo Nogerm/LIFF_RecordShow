@@ -29,13 +29,16 @@ thead th {
     background: steelblue;
     color: #FFF;
     min-width: 80px;
-    height: 40px;
     z-index: 1;
 }
   
 thead th:first-child {
     left: 0;
     z-index: 2;
+}
+
+.top0 {
+    top: 0px !important;
 }
   
 tbody th {

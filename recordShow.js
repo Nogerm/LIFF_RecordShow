@@ -230,16 +230,26 @@ function clearTable() {
 function createTableHead(events) {
   let table = document.getElementById("userTable");
   let header = table.createTHead();
-  let headerRow = header.insertRow(0);
-  let th = document.createElement('th');
-  th.innerHTML = "組員";
-  headerRow.appendChild(th);
+
+  //#1 row: radio
+  let headerRow1 = header.insertRow(0);
+  let th1 = document.createElement('th');
+  th1.colSpan = events.length + 1;
+  th1.className = "top0";
+  th1.innerHTML = "<div class=\"ui form radio-wrapper\"> <div class=\"fields\"> <div class=\"field\"> <div class=\"ui radio checkbox\"> <input type=\"radio\" id=\"主日\" name=\"rate\" onclick=\"setFilter(this.id)\" checked> <label>主日</label> </div> </div> <div class=\"field\"> <div class=\"ui radio checkbox\"> <input type=\"radio\" id=\"小組\" name=\"rate\" onclick=\"setFilter(this.id)\"> <label>小組</label> </div> </div> <div class=\"field\"> <div class=\"ui radio checkbox\"> <input type=\"radio\" id=\"幸福門訓\" name=\"rate\" onclick=\"setFilter(this.id)\"> <label>幸福門訓</label> </div> </div> <div class=\"field\"> <div class=\"ui radio checkbox\"> <input type=\"radio\" id=\"聖靈研習\" name=\"rate\" onclick=\"setFilter(this.id)\"> <label>聖靈研習</label> </div> </div> </div> </div>"
+  headerRow1.appendChild(th1);
+
+  //#2 row: date
+  let headerRow2 = header.insertRow(1);
+  let th2 = document.createElement('th');
+  th2.innerHTML = "組員";
+  headerRow2.appendChild(th2);
 
   events.forEach((event) => {
     if(event.type === selectedFilter) {
       let th = document.createElement('th');
       th.innerHTML = timeStampToString(event.timestamp);
-      headerRow.appendChild(th);
+      headerRow2.appendChild(th);
     }
   }); 
 
