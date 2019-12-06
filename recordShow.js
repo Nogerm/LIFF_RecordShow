@@ -5,8 +5,7 @@ var allMembers = [];
 var allEvents = [];
 var reportAtendee = [];
 
-var selectedEventId = undefined;
-var selectedEventIndex = undefined;
+var selectedFilter = "all";
 
 //init
 window.onload = function (e) {
@@ -50,9 +49,9 @@ function initializeApp(profile) {
 
       reportData = response.data;
 
-      //clearTable();
-      //createTableHead(reportData.eventTime);
-      //createTableBodyByEvent(reportData.eventTime, reportData.groupMembers);
+      clearTable();
+      createTableHead(reportData.eventTime);
+      createTableBodyByEvent(reportData.eventTime, reportData.groupMembers);
 
     } else if(response.data.status === 512) {
       swal.fire({
@@ -90,25 +89,21 @@ function createTableHead(events) {
   let table = document.getElementById("userTable");
   let header = table.createTHead();
 
-  //#1 row: radio
+  //#2 row: date
   let headerRow1 = header.insertRow(0);
   let th1 = document.createElement('th');
-  th1.colSpan = events.length + 1;
-  th1.className = "top0";
-  //th1.innerHTML = "<div class=\"ui form radio-wrapper\"> <div class=\"fields\"> <div class=\"field\"> <div class=\"ui radio checkbox\"> <input type=\"radio\" id=\"主日\" name=\"rate\" onclick=\"setFilter(this.id)\" checked> <label>主日</label> </div> </div> <div class=\"field\"> <div class=\"ui radio checkbox\"> <input type=\"radio\" id=\"小組\" name=\"rate\" onclick=\"setFilter(this.id)\"> <label>小組</label> </div> </div> <div class=\"field\"> <div class=\"ui radio checkbox\"> <input type=\"radio\" id=\"幸福門訓\" name=\"rate\" onclick=\"setFilter(this.id)\"> <label>幸福門訓</label> </div> </div> <div class=\"field\"> <div class=\"ui radio checkbox\"> <input type=\"radio\" id=\"聖靈研習\" name=\"rate\" onclick=\"setFilter(this.id)\"> <label>聖靈研習</label> </div> </div> </div> </div>"
+  th1.innerHTML = "組員";
   headerRow1.appendChild(th1);
 
-  //#2 row: date
-  let headerRow2 = header.insertRow(1);
-  let th2 = document.createElement('th');
-  th2.innerHTML = "組員";
-  headerRow2.appendChild(th2);
-
   events.forEach((event) => {
-    if(event.type === selectedFilter) {
+    if(selectedFilter === "all") {
       let th = document.createElement('th');
-      th.innerHTML = timeStampToString(event.timestamp);
-      headerRow2.appendChild(th);
+      th.innerHTML = event.timestring.substr(4,2) + '/' + event.timestring.substr(6,2);
+      headerRow1.appendChild(th);
+    } else if(event.type === selectedFilter) {
+      let th = document.createElement('th');
+      th.innerHTML = event.timestring.substr(4,2) + '/' + event.timestring.substr(6,2);
+      headerRow1.appendChild(th);
     }
   }); 
 
@@ -120,30 +115,55 @@ function createTableBodyByEvent(events, groupMembers) {
   let table = document.getElementById("userTable");
   let body = table.createTBody();
 
-  groupMembers.forEach((member, idx_row) => {
+  //get all users in one array
+  let allMembers = [];
+  groupMembers.forEach((group) => {
+    allMembers = allMembers.concat(group.groupMember);
+  });
+
+  allMembers.forEach((member, idx_row) => {
     let bodyRow = body.insertRow(idx_row);
-    let filteredEvents = events.filter(event => event.type === selectedFilter);
-    eventsWithFirstColumn = [{}, ...filteredEvents];
-    eventsWithFirstColumn.forEach((event, idx_column) => {
-      if(idx_column === 0) {
-        //name column
-        let th = document.createElement('th');
-        th.innerHTML = member;
-        bodyRow.appendChild(th);
-      } else {
-        //data column
-        let bodyCell  = bodyRow.insertCell(idx_column);
-        const isAtendee = event.attendee.indexOf(member) > -1 ? true : false;
-        if(isAtendee) bodyCell.innerHTML = "<i class=\"large green checkmark icon\"></i>";
-        else bodyCell.innerHTML = "";
-      }
-    });
+    if(selectedFilter === "all") {
+      eventsWithFirstColumn = [{}, ...events];
+      eventsWithFirstColumn.forEach((event, idx_column) => {
+        if(idx_column === 0) {
+          //name column
+          let th = document.createElement('th');
+          th.innerHTML = member;
+          bodyRow.appendChild(th);
+        } else {
+          //data column
+          let bodyCell  = bodyRow.insertCell(idx_column);
+          const isAtendee = event.attendee.indexOf(member) > -1 ? true : false;
+          if(isAtendee) bodyCell.innerHTML = "<i class=\"large green checkmark icon\"></i>";
+          else bodyCell.innerHTML = "";
+        }
+      });
+    } else {
+      let filteredEvents = events.filter(event => event.type === selectedFilter);
+      eventsWithFirstColumn = [{}, ...filteredEvents];
+      eventsWithFirstColumn.forEach((event, idx_column) => {
+        if(idx_column === 0) {
+          //name column
+          let th = document.createElement('th');
+          th.innerHTML = member;
+          bodyRow.appendChild(th);
+        } else {
+          //data column
+          let bodyCell  = bodyRow.insertCell(idx_column);
+          const isAtendee = event.attendee.indexOf(member) > -1 ? true : false;
+          if(isAtendee) bodyCell.innerHTML = "<i class=\"large green checkmark icon\"></i>";
+          else bodyCell.innerHTML = "";
+        }
+      });
+    }
+    
   });
 
   //scroll to last column
-  //const headerRow = table.getElementsByTagName('thead')[0];
-  //const lastColumn = headerRow.children[0].children[events.length];
-  //table.scrollLeft = lastColumn.offsetLeft;
+  const headerRow = table.getElementsByTagName('thead')[0];
+  const lastColumn = headerRow.children[0].children[events.length];
+  table.scrollLeft = lastColumn.offsetLeft;
 }
 
 function setFilter (filter) {
