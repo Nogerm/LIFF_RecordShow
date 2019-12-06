@@ -1,11 +1,12 @@
 const hostURL = "https://script.google.com/macros/s/AKfycbyQwaNfRrnyBB4kCOvdMgUw_o6v8Z_lNUDqjNCT5Uo-dPKBvZ0/exec";
-const liffID = "1602321395-Xzlq0DEE";
-const HeaderRowNum = 3;
+const liffID = "1602321395-Le47oZqq";
 
-var reportTimeStr = "";
-var reportGroup = "";
-var selectedFilter = "主日";
-var reportData = {};
+var allMembers = [];
+var allEvents = [];
+var reportAtendee = [];
+
+var selectedEventId = undefined;
+var selectedEventIndex = undefined;
 
 //init
 window.onload = function (e) {
@@ -14,17 +15,17 @@ window.onload = function (e) {
       liffId: liffID
     },
     data => {
-      console.log('LIFF initialization ok', data);
+      console.log('LIFF initialization ok', data)
       if (liff.isLoggedIn()) {
-        console.log('LIFF is logged in');
+        console.log('LIFF is logged in')
         liff.getProfile()
-        .then(profile => {
-          console.log('getProfile ok displayName', profile.displayName);
-          initializeApp(profile);
-        })
-        .catch((err) => {
-          console.log('getProfile error', err);
-        })
+          .then(profile => {
+            console.log('getProfile ok displayName', profile.displayName);
+            initializeApp(profile);
+          })
+          .catch((err) => {
+            console.log('getProfile error', err);
+          })
       } else {
         console.log('LIFF is not logged in');
         liff.login();
@@ -33,8 +34,8 @@ window.onload = function (e) {
     err => {
       console.log('LIFF initialization failed', err);
     }
-  )
-};
+  );
+}
 
 function initializeApp(profile) {
   console.log("initializeApp" + JSON.stringify(profile));
