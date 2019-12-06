@@ -1,4 +1,5 @@
 const hostURL = "https://script.google.com/macros/s/AKfycbyQwaNfRrnyBB4kCOvdMgUw_o6v8Z_lNUDqjNCT5Uo-dPKBvZ0/exec";
+const liffID = "1602321395-Xzlq0DEE";
 const HeaderRowNum = 3;
 
 var reportTimeStr = "";
@@ -8,192 +9,49 @@ var reportData = {};
 
 //init
 window.onload = function (e) {
-
   liff.init(
+    {
+      liffId: liffID
+    },
     data => {
-      // Now you can call LIFF API
-      initializeApp(data);
+      console.log('LIFF initialization ok', data);
+      if (liff.isLoggedIn()) {
+        console.log('LIFF is logged in');
+        liff.getProfile()
+        .then(profile => {
+          console.log('getProfile ok displayName', profile.displayName);
+          initializeApp(profile);
+        })
+        .catch((err) => {
+          console.log('getProfile error', err);
+        })
+      } else {
+        console.log('LIFF is not logged in');
+        liff.login();
+      }
     },
     err => {
-      // LIFF initialization failed
-      swal.fire(
-        '錯誤',
-        'LIFF視窗初始化失敗',
-        'error'
-      );
-      swal.fire({
-        title: '錯誤',
-        text: 'LIFF視窗初始化失敗',
-        type: 'error',
-        onClose: () => {
-          //liff.closeWindow();
-        }
-      });
-
-      //show/hide element
-      let div_loading = document.getElementById("loading");
-      div_loading.className = "ui inverted dimmer";
-
-      let fakeData = {
-        "status": 200,
-        "userName": "吳駿偉",
-        "groupName": "駿偉小組",
-        "groupMembers": [
-            "吳駿偉",
-            "陳昱婷",
-            "柯博軒",
-            "吳奕萱",
-            "方立翔",
-            "吳紫寧",
-            "朱紘妤",
-            "陳夏恩",
-            "湯晴",
-            "王耀中",
-            "潘王安",
-            "徐彬",
-            "王柏硯",
-            "楊凱翔"
-        ],
-        "eventTime": [
-            {
-                "timestamp": 1563667200,
-                "timestring": "2019-07-20T16:00:00.000Z",
-                "type": "主日",
-                "attendee": [
-                    "柯博軒",
-                    "湯晴",
-                    "王耀中"
-                ]
-            },
-            {
-                "timestamp": 1564272000,
-                "timestring": "2019-07-27T16:00:00.000Z",
-                "type": "主日",
-                "attendee": [
-                    "陳夏恩",
-                    "朱紘妤"
-                ]
-            },
-            {
-                "timestamp": 1564876800,
-                "timestring": "2019-08-03T16:00:00.000Z",
-                "type": "主日",
-                "attendee": [
-                    "方立翔",
-                    "王耀中",
-                    "湯晴"
-                ]
-            },
-            {
-                "timestamp": 1565481600,
-                "timestring": "2019-08-10T16:00:00.000Z",
-                "type": "主日",
-                "attendee": [
-                    "吳駿偉",
-                    "陳昱婷",
-                    "柯博軒"
-                ]
-            },
-            {
-                "timestamp": 1566086400,
-                "timestring": "2019-08-17T16:00:00.000Z",
-                "type": "主日",
-                "attendee": [
-                    "吳駿偉",
-                    "陳昱婷",
-                    "柯博軒"
-                ]
-            },
-            {
-                "timestamp": 1566691200,
-                "timestring": "2019-08-24T16:00:00.000Z",
-                "type": "主日",
-                "attendee": [
-                    "吳駿偉",
-                    "柯博軒",
-                    "湯晴",
-                    "徐彬"
-                ]
-            },
-            {
-                "timestamp": 1567296000,
-                "timestring": "2019-08-31T16:00:00.000Z",
-                "type": "小組",
-                "attendee": [
-                    "吳駿偉",
-                    "陳昱婷",
-                    "陳夏恩",
-                    "朱紘妤"
-                ]
-            },
-            {
-                "timestamp": 1567900800,
-                "timestring": "2019-09-07T16:00:00.000Z",
-                "type": "幸福門訓",
-                "attendee": [
-                    "陳昱婷",
-                    "柯博軒",
-                    "湯晴",
-                    "王耀中",
-                    "潘王安"
-                ]
-            },
-            {
-                "timestamp": 1568505600,
-                "timestring": "2019-09-14T16:00:00.000Z",
-                "type": "主日",
-                "attendee": [
-                    "吳駿偉",
-                    "陳昱婷",
-                    "吳奕萱",
-                    "方立翔",
-                    "王耀中",
-                    "湯晴"
-                ]
-            },
-            {
-                "timestamp": 1569110400,
-                "timestring": "2019-09-21T16:00:00.000Z",
-                "type": "聖靈研習",
-                "attendee": [
-                    "吳駿偉",
-                    "陳昱婷",
-                    "吳奕萱",
-                    "方立翔"
-                ]
-            }
-        ]
-      }
-
-      reportData = fakeData;
-
-      clearTable();
-      createTableHead(fakeData.eventTime);
-      createTableBodyByEvent(fakeData.eventTime, fakeData.groupMembers);
-
+      console.log('LIFF initialization failed', err);
     }
-  );
+  )
 };
 
-function initializeApp(data) {
-  //check user permission
-  const query_url = hostURL + "?type=record_basic&lineId=" + data.context.userId;
+function initializeApp(profile) {
+  console.log("initializeApp" + JSON.stringify(profile));
+
+  const query_url = hostURL + "?type=record_basic&lineId=" + profile.userId;
   axios.get(query_url)
   .then(response => {
     // Success
-
-    //show/hide element
-    let div_loading = document.getElementById("loading");
-    div_loading.className = "ui inverted dimmer";
 
     if(response.data.status === 200) {
       //Swal.fire(JSON.stringify(response.data));
 
       reportData = response.data;
 
-      clearTable();
-      createTableHead(reportData.eventTime);
-      createTableBodyByEvent(reportData.eventTime, reportData.groupMembers);
+      //clearTable();
+      //createTableHead(reportData.eventTime);
+      //createTableBodyByEvent(reportData.eventTime, reportData.groupMembers);
 
     } else if(response.data.status === 512) {
       swal.fire({
@@ -236,7 +94,7 @@ function createTableHead(events) {
   let th1 = document.createElement('th');
   th1.colSpan = events.length + 1;
   th1.className = "top0";
-  th1.innerHTML = "<div class=\"ui form radio-wrapper\"> <div class=\"fields\"> <div class=\"field\"> <div class=\"ui radio checkbox\"> <input type=\"radio\" id=\"主日\" name=\"rate\" onclick=\"setFilter(this.id)\" checked> <label>主日</label> </div> </div> <div class=\"field\"> <div class=\"ui radio checkbox\"> <input type=\"radio\" id=\"小組\" name=\"rate\" onclick=\"setFilter(this.id)\"> <label>小組</label> </div> </div> <div class=\"field\"> <div class=\"ui radio checkbox\"> <input type=\"radio\" id=\"幸福門訓\" name=\"rate\" onclick=\"setFilter(this.id)\"> <label>幸福門訓</label> </div> </div> <div class=\"field\"> <div class=\"ui radio checkbox\"> <input type=\"radio\" id=\"聖靈研習\" name=\"rate\" onclick=\"setFilter(this.id)\"> <label>聖靈研習</label> </div> </div> </div> </div>"
+  //th1.innerHTML = "<div class=\"ui form radio-wrapper\"> <div class=\"fields\"> <div class=\"field\"> <div class=\"ui radio checkbox\"> <input type=\"radio\" id=\"主日\" name=\"rate\" onclick=\"setFilter(this.id)\" checked> <label>主日</label> </div> </div> <div class=\"field\"> <div class=\"ui radio checkbox\"> <input type=\"radio\" id=\"小組\" name=\"rate\" onclick=\"setFilter(this.id)\"> <label>小組</label> </div> </div> <div class=\"field\"> <div class=\"ui radio checkbox\"> <input type=\"radio\" id=\"幸福門訓\" name=\"rate\" onclick=\"setFilter(this.id)\"> <label>幸福門訓</label> </div> </div> <div class=\"field\"> <div class=\"ui radio checkbox\"> <input type=\"radio\" id=\"聖靈研習\" name=\"rate\" onclick=\"setFilter(this.id)\"> <label>聖靈研習</label> </div> </div> </div> </div>"
   headerRow1.appendChild(th1);
 
   //#2 row: date
