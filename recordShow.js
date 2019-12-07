@@ -155,10 +155,8 @@ function createEventButtons(events) {
 
 function setTableMaxHeight() {
   let tableContainer = document.getElementById("tableContainer");
-
-  console.log("offsetTop" + tableContainer.offsetTop);
-
-  tableContainer.style.maxHeight = (window.innerHeight - tableContainer.offsetTop) + 'px';
+  //tableContainer.style.maxHeight = (window.innerHeight - tableContainer.offsetTop) + 'px';
+  tableContainer.style.maxHeight = window.innerHeight + 'px';
 }
 
 function clearTable() {
