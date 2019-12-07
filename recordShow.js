@@ -3,6 +3,7 @@ const liffID = "1602321395-Le47oZqq";
 const defaultType = "全部顯示";
 
 var allMembers = [];
+var allMembersRaw = [];
 var allEventTypes = [];
 var reportAtendee = [];
 
@@ -62,6 +63,7 @@ function initializeApp(profile) {
 
       //get all users in one array
       allMembers = [];
+      allMembersRaw = response.data.groupMembers;
       response.data.groupMembers.forEach((group) => {
         allMembers = allMembers.concat(group.groupMember);
       });
@@ -185,9 +187,21 @@ function createTableBodyByEvent(events) {
   let table = document.getElementById("userTable");
   let body = table.createTBody();
 
-  allMembers.forEach((member, idx_row) => {
+  //filter relative member
+  let filteredMembers = [];
+  if(selectedFilter.indexOf("小組") > -1) {
+    //is one group only
+    filteredMembers = allMembersRaw.filter(group => group.groupName === selectedFilter)[0].groupMember;
+  } else {
+    filteredMembers = allMembers;
+  }
+  console.log("filtered members" + JSON.stringify(filteredMembers));
+
+  //create table body
+  filteredMembers.forEach((member, idx_row) => {
     let bodyRow = body.insertRow(idx_row);
     if(selectedFilter === defaultType) {
+      //show all events
       eventsWithFirstColumn = [{}, ...events];
       eventsWithFirstColumn.forEach((event, idx_column) => {
         if(idx_column === 0) {
@@ -207,6 +221,7 @@ function createTableBodyByEvent(events) {
         }
       });
     } else {
+      //show selected event
       let filteredEvents = events.filter(event => event.type === selectedFilter);
       eventsWithFirstColumn = [{}, ...filteredEvents];
       eventsWithFirstColumn.forEach((event, idx_column) => {
