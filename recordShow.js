@@ -1,11 +1,12 @@
 const hostURL = "https://script.google.com/macros/s/AKfycbyQwaNfRrnyBB4kCOvdMgUw_o6v8Z_lNUDqjNCT5Uo-dPKBvZ0/exec";
 const liffID = "1602321395-Le47oZqq";
+const defaultType = "全部顯示";
 
 var allMembers = [];
-var allEvents = [];
+var allEventTypes = [];
 var reportAtendee = [];
 
-var selectedFilter = "all";
+var selectedFilter = defaultType;
 
 //init
 window.onload = function (e) {
@@ -47,11 +48,20 @@ function initializeApp(profile) {
     if(response.data.status === 200) {
       //Swal.fire(JSON.stringify(response.data));
 
-      reportData = response.data;
+      //get all users in one array
+      allMembers = [];
+      response.data.groupMembers.forEach((group) => {
+        allMembers = allMembers.concat(group.groupMember);
+      });
+      console.log("allMembers: " + allMembers);
 
+      //create event type select buttons
+      createEventButtons(response.data.eventTime);
+
+      //create table
       clearTable();
-      createTableHead(reportData.eventTime);
-      createTableBodyByEvent(reportData.eventTime, reportData.groupMembers);
+      createTableHead(response.data.eventTime);
+      createTableBodyByEvent(response.data.eventTime);
 
     } else if(response.data.status === 512) {
       swal.fire({
@@ -81,6 +91,49 @@ function initializeApp(profile) {
   });
 }
 
+function createEventButtons(events) {
+  const timeContainer = document.getElementById("time-container");
+
+  //create dummy event "all"
+  const dummyType = {
+    timestring: undefined,
+    type: defaultType
+  }
+  const displayEvents = [dummyType, ...events];
+
+  displayEvents.forEach((event, index) => {
+    //record all event type
+    if(allEventTypes.indexOf(event.type) === -1) {
+      allEventTypes.push(event.type);
+
+      //create time button
+      let btn = document.createElement("button");
+      btn.innerHTML = event.type;
+      btn.setAttribute("class", (selectedFilter === event.type) ? "ui primary button" : "ui primary basic button");
+      btn.setAttribute("id", event.type);
+      btn.setAttribute("value", index);
+      btn.style.marginBottom = "8px";
+      btn.onclick = function(element) {
+        selectedFilter = element.target.id;
+        console.log("selected filter: " + selectedFilter);
+
+        //redraw all time buttons
+        let children = timeContainer.children;
+        for (var i = 0; i < children.length; i++) {
+          let button = children[i];
+          button.className = (button.id === selectedFilter) ? "ui primary button" : "ui primary basic button";
+        }
+
+        //re-create table body
+        clearTable();
+        createTableHead(events);
+        createTableBodyByEvent(events);
+      }
+      timeContainer.appendChild(btn);
+    }
+  });
+}
+
 function clearTable() {
   $("#userTable").empty();
 }
@@ -96,34 +149,32 @@ function createTableHead(events) {
   headerRow1.appendChild(th1);
 
   events.forEach((event) => {
-    if(selectedFilter === "all") {
+    if(selectedFilter === defaultType) {
+      //all event type included
       let th = document.createElement('th');
-      th.innerHTML = event.timestring.substr(4,2) + '/' + event.timestring.substr(6,2);
+      th.innerHTML = event.timestring.substr(4,2) + '/' + event.timestring.substr(6,2) + '<br>' + event.type;
       headerRow1.appendChild(th);
-    } else if(event.type === selectedFilter) {
-      let th = document.createElement('th');
-      th.innerHTML = event.timestring.substr(4,2) + '/' + event.timestring.substr(6,2);
-      headerRow1.appendChild(th);
+    } else {
+        //only show selected type
+        if(event.type === selectedFilter) {
+        let th = document.createElement('th');
+        th.innerHTML = event.timestring.substr(4,2) + '/' + event.timestring.substr(6,2) + '<br>' + event.type;
+        headerRow1.appendChild(th);
+      }
     }
   }); 
 
 }
 
-function createTableBodyByEvent(events, groupMembers) {
+function createTableBodyByEvent(events) {
 
   //update table
   let table = document.getElementById("userTable");
   let body = table.createTBody();
 
-  //get all users in one array
-  let allMembers = [];
-  groupMembers.forEach((group) => {
-    allMembers = allMembers.concat(group.groupMember);
-  });
-
   allMembers.forEach((member, idx_row) => {
     let bodyRow = body.insertRow(idx_row);
-    if(selectedFilter === "all") {
+    if(selectedFilter === defaultType) {
       eventsWithFirstColumn = [{}, ...events];
       eventsWithFirstColumn.forEach((event, idx_column) => {
         if(idx_column === 0) {
@@ -159,41 +210,5 @@ function createTableBodyByEvent(events, groupMembers) {
     }
     
   });
-
-  //scroll to last column
-  const headerRow = table.getElementsByTagName('thead')[0];
-  const lastColumn = headerRow.children[0].children[events.length];
-  table.scrollLeft = lastColumn.offsetLeft;
-}
-
-function setFilter (filter) {
-  selectedFilter = filter;
-  console.log(JSON.stringify(filter));
-
-  clearTable();
-  createTableHead(reportData.eventTime);
-  createTableBodyByEvent(reportData.eventTime, reportData.groupMembers);
-
-  document.getElementById("主日").checked    = selectedFilter === "主日" ? true : false;
-  document.getElementById("小組").checked    = selectedFilter === "小組" ? true : false;
-  document.getElementById("幸福門訓").checked = selectedFilter === "幸福門訓" ? true : false;
-  document.getElementById("聖靈研習").checked = selectedFilter === "聖靈研習" ? true : false;
-}
-
-function timeStampToString (time){
-  const datetime = new Date();
-  const timezone_shift = 8;
-  datetime.setTime((time + (timezone_shift * 60 * 60)) * 1000);
-  const month = datetime.getMonth() + 1;
-  const date = datetime.getDate();
-
-  if(month < 10 && date < 10) return month + "/0" + date;
-  else if(month < 10 && date >= 10) return month + "/" + date;
-  else if(month >= 10 && date < 10) return month + "/0" + date;
-  else return month + "/" + date;
-}
-
-function arrayify(collection) {
-  return Array.prototype.slice.call(collection);
 }
 
