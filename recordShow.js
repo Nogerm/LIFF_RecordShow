@@ -36,6 +36,8 @@ window.onload = function (e) {
       console.log('LIFF initialization failed', err);
     }
   );
+
+  console.log("height: " + window.innerHeight);
 }
 
 function showSegmentLoading() {
@@ -76,6 +78,7 @@ function initializeApp(profile) {
       clearTable();
       createTableHead(response.data.eventTime);
       createTableBodyByEvent(response.data.eventTime);
+      setTableMaxHeight();
 
     } else if(response.data.status === 512) {
       swal.fire({
@@ -143,10 +146,19 @@ function createEventButtons(events) {
         clearTable();
         createTableHead(events);
         createTableBodyByEvent(events);
+        setTableMaxHeight();
       }
       timeContainer.appendChild(btn);
     }
   });
+}
+
+function setTableMaxHeight() {
+  let tableContainer = document.getElementById("tableContainer");
+
+  console.log("offsetTop" + tableContainer.offsetTop);
+
+  tableContainer.style.maxHeight = (window.innerHeight - tableContainer.offsetTop) + 'px';
 }
 
 function clearTable() {
