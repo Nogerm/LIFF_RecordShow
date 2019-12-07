@@ -25,7 +25,6 @@ td, th {
 thead th {
     position: -webkit-sticky; /* for Safari */
     position: sticky;
-    top: 30px;
     background: steelblue;
     color: #FFF;
     min-width: 80px;

@@ -37,13 +37,25 @@ window.onload = function (e) {
   );
 }
 
+function showSegmentLoading() {
+  let time_area = document.getElementById("time-area");
+  time_area.className = "ui segment loading";
+}
+
+function hideSegmentLoading() {
+  let time_area = document.getElementById("time-area");
+  time_area.className = "ui segment";
+}
+
 function initializeApp(profile) {
   console.log("initializeApp" + JSON.stringify(profile));
 
+  showSegmentLoading();
   const query_url = hostURL + "?type=record_basic&lineId=" + profile.userId;
   axios.get(query_url)
   .then(response => {
     // Success
+    hideSegmentLoading();
 
     if(response.data.status === 200) {
       //Swal.fire(JSON.stringify(response.data));
@@ -82,6 +94,7 @@ function initializeApp(profile) {
   })
   .catch(error => {
     // Error
+    hideSegmentLoading();
     console.log(error);
     swal.fire(
       '錯誤',
@@ -186,7 +199,10 @@ function createTableBodyByEvent(events) {
           //data column
           let bodyCell  = bodyRow.insertCell(idx_column);
           const isAtendee = event.attendee.indexOf(member) > -1 ? true : false;
-          if(isAtendee) bodyCell.innerHTML = "<i class=\"large green checkmark icon\"></i>";
+          if(isAtendee) {
+            bodyCell.innerHTML = "<i class=\"large green checkmark icon\"></i>";
+            bodyCell.style.backgroundColor = "lightgreen";
+          }
           else bodyCell.innerHTML = "";
         }
       });
@@ -203,7 +219,10 @@ function createTableBodyByEvent(events) {
           //data column
           let bodyCell  = bodyRow.insertCell(idx_column);
           const isAtendee = event.attendee.indexOf(member) > -1 ? true : false;
-          if(isAtendee) bodyCell.innerHTML = "<i class=\"large green checkmark icon\"></i>";
+          if(isAtendee) {
+            bodyCell.innerHTML = "<i class=\"large green checkmark icon\"></i>";
+            bodyCell.style.backgroundColor = "lightgreen";
+          }
           else bodyCell.innerHTML = "";
         }
       });
