@@ -8,6 +8,7 @@ var allEventTypes = [];
 var reportAtendee = [];
 
 var selectedFilter = defaultType;
+var selectedGroup = undefined;
 
 //init
 window.onload = function (e) {
@@ -41,12 +42,12 @@ window.onload = function (e) {
 }
 
 function showSegmentLoading() {
-  let time_area = document.getElementById("time-area");
+  let time_area = document.getElementById("type-area");
   time_area.className = "ui segment loading";
 }
 
 function hideSegmentLoading() {
-  let time_area = document.getElementById("time-area");
+  let time_area = document.getElementById("type-area");
   time_area.className = "ui segment";
 }
 
@@ -70,6 +71,9 @@ function initializeApp(profile) {
         allMembers = allMembers.concat(group.groupMember);
       });
       console.log("allMembers: " + allMembers);
+
+      //create group list select buttons
+      createGroupButtons(response.data.groupName, response.data.eventTime);
 
       //create event type select buttons
       createEventButtons(response.data.eventTime);
@@ -109,8 +113,46 @@ function initializeApp(profile) {
   });
 }
 
+function createGroupButtons(groupList, events) {
+  const groupContainer = document.getElementById("group-container");
+  if(groupList.length > 0) selectedGroup = groupList[0];
+
+  groupList.forEach((groupName, index) => {
+    //create time button
+    let btn = document.createElement("button");
+    btn.innerHTML = groupName;
+    btn.setAttribute("class", (selectedGroup === groupName) ? "ui primary button" : "ui primary basic button");
+    btn.setAttribute("id", groupName);
+    btn.setAttribute("value", index);
+    btn.style.marginBottom = "8px";
+    btn.onclick = function(element) {
+      selectedGroup = element.target.id;
+      console.log("selected group: " + selectedGroup);
+
+      //redraw all group buttons
+      let children = groupContainer.children;
+      for (var i = 0; i < children.length; i++) {
+        let button = children[i];
+        button.className = (button.id === selectedGroup) ? "ui primary button" : "ui primary basic button";
+      }
+
+      //re-create table body
+      createEventButtons(events)
+      clearTable();
+      createTableHead(events);
+      createTableBodyByEvent(events);
+      setTableMaxHeight();
+    }
+    groupContainer.appendChild(btn);
+  });
+}
+
 function createEventButtons(events) {
-  const timeContainer = document.getElementById("time-container");
+  const timeContainer = document.getElementById("type-container");
+  while (timeContainer.firstChild) {
+    timeContainer.removeChild(timeContainer.firstChild);
+  }
+  allEventTypes = [];
 
   //create dummy event "all"
   const dummyType = {
@@ -121,7 +163,7 @@ function createEventButtons(events) {
 
   displayEvents.forEach((event, index) => {
     //record all event type
-    if(allEventTypes.indexOf(event.type) === -1) {
+    if(allEventTypes.indexOf(event.type) === -1 && (event.type.indexOf("小組") === -1 || event.type === selectedGroup)) {
       allEventTypes.push(event.type);
 
       //create time button
@@ -151,6 +193,7 @@ function createEventButtons(events) {
       timeContainer.appendChild(btn);
     }
   });
+  console.log("allEventTypes" + JSON.stringify(allEventTypes));
 }
 
 function setTableMaxHeight() {
@@ -173,7 +216,10 @@ function createTableHead(events) {
   th1.innerHTML = "組員";
   headerRow1.appendChild(th1);
 
-  events.forEach((event) => {
+  //filter events
+  const filteredEvents = events.filter(event => allEventTypes.indexOf(event.type) > -1).reverse();
+
+  filteredEvents.forEach((event) => {
     if(selectedFilter === defaultType) {
       //all event type included
       let th = document.createElement('th');
@@ -187,8 +233,7 @@ function createTableHead(events) {
         headerRow1.appendChild(th);
       }
     }
-  }); 
-
+  });
 }
 
 function createTableBodyByEvent(events) {
@@ -199,20 +244,23 @@ function createTableBodyByEvent(events) {
 
   //filter relative member
   let filteredMembers = [];
-  if(selectedFilter.indexOf("小組") > -1) {
+  if(selectedGroup.indexOf("小組") > -1) {
     //is one group only
-    filteredMembers = allMembersRaw.filter(group => group.groupName === selectedFilter)[0].groupMember;
+    filteredMembers = allMembersRaw.filter(group => group.groupName === selectedGroup)[0].groupMember;
   } else {
     filteredMembers = allMembers;
   }
   console.log("filtered members" + JSON.stringify(filteredMembers));
+
+  //filter events
+  const filteredEvents = events.filter(event => allEventTypes.indexOf(event.type) > -1).reverse();
 
   //create table body
   filteredMembers.forEach((member, idx_row) => {
     let bodyRow = body.insertRow(idx_row);
     if(selectedFilter === defaultType) {
       //show all events
-      eventsWithFirstColumn = [{}, ...events];
+      eventsWithFirstColumn = [{}, ...filteredEvents];
       eventsWithFirstColumn.forEach((event, idx_column) => {
         if(idx_column === 0) {
           //name column
@@ -232,8 +280,8 @@ function createTableBodyByEvent(events) {
       });
     } else {
       //show selected event
-      let filteredEvents = events.filter(event => event.type === selectedFilter);
-      eventsWithFirstColumn = [{}, ...filteredEvents];
+      let filteredTypeEvents = filteredEvents.filter(event => event.type === selectedFilter);
+      eventsWithFirstColumn = [{}, ...filteredTypeEvents];
       eventsWithFirstColumn.forEach((event, idx_column) => {
         if(idx_column === 0) {
           //name column
