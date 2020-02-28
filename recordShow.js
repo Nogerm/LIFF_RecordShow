@@ -1,5 +1,5 @@
 const hostURL = "https://script.google.com/macros/s/AKfycbyQwaNfRrnyBB4kCOvdMgUw_o6v8Z_lNUDqjNCT5Uo-dPKBvZ0/exec";
-const liffID = "1602321395-Le47oZqq";
+const liffID = "1653896800-R8Mowq80";
 const defaultType = "全部顯示";
 
 var allMembers = [];
@@ -12,8 +12,7 @@ var selectedGroup = undefined;
 
 //init
 window.onload = function (e) {
-  liff.init(
-    {
+  liff.init({
       liffId: liffID
     },
     data => {
@@ -57,65 +56,65 @@ function initializeApp(profile) {
   showSegmentLoading();
   const query_url = hostURL + "?type=record_basic&lineId=" + profile.userId;
   axios.get(query_url)
-  .then(response => {
-    // Success
-    hideSegmentLoading();
+    .then(response => {
+      // Success
+      hideSegmentLoading();
 
-    if(response.data.status === 200) {
-      //Swal.fire(JSON.stringify(response.data));
+      if (response.data.status === 200) {
+        //Swal.fire(JSON.stringify(response.data));
 
-      //get all users in one array
-      allMembers = [];
-      allMembersRaw = response.data.groupMembers;
-      response.data.groupMembers.forEach((group) => {
-        allMembers = allMembers.concat(group.groupMember);
-      });
-      console.log("allMembers: " + allMembers);
+        //get all users in one array
+        allMembers = [];
+        allMembersRaw = response.data.groupMembers;
+        response.data.groupMembers.forEach((group) => {
+          allMembers = allMembers.concat(group.groupMember);
+        });
+        console.log("allMembers: " + allMembers);
 
-      //create group list select buttons
-      createGroupButtons(response.data.groupName, response.data.eventTime);
+        //create group list select buttons
+        createGroupButtons(response.data.groupName, response.data.eventTime);
 
-      //create event type select buttons
-      createEventButtons(response.data.eventTime);
+        //create event type select buttons
+        createEventButtons(response.data.eventTime);
 
-      //create table
-      clearTable();
-      createTableHead(response.data.eventTime);
-      createTableBodyByEvent(response.data.eventTime);
-      setTableMaxHeight();
+        //create table
+        clearTable();
+        createTableHead(response.data.eventTime);
+        createTableBodyByEvent(response.data.eventTime);
+        setTableMaxHeight();
 
-    } else if(response.data.status === 512) {
-      swal.fire({
-        title: '沒有權限',
-        text: '請先到設定頁面，申請成為回報人員',
-        type: 'error',
-        onClose: () => {
-          liff.closeWindow();
-        }
-      });
-    } else {
+      } else if (response.data.status === 512) {
+        swal.fire({
+          title: '沒有權限',
+          text: '請先到設定頁面，申請成為回報人員',
+          type: 'error',
+          onClose: () => {
+            liff.closeWindow();
+          }
+        });
+      } else {
+        swal.fire(
+          '錯誤',
+          response.data.message,
+          'error'
+        );
+      }
+    })
+    .catch(error => {
+      // Error
+      hideSegmentLoading();
+      console.log(error);
       swal.fire(
         '錯誤',
-        response.data.message,
+        error,
         'error'
       );
-    }
-  })
-  .catch(error => {
-    // Error
-    hideSegmentLoading();
-    console.log(error);
-    swal.fire(
-      '錯誤',
-      error,
-      'error'
-    );
-  });
+    });
 }
 
 function createGroupButtons(groupList, events) {
   const groupContainer = document.getElementById("group-container");
-  if(groupList.length > 0) selectedGroup = groupList[0];
+  if (groupList.length > 0) selectedGroup = groupList[0];
 
   groupList.forEach((groupName, index) => {
     //create time button
@@ -125,7 +124,7 @@ function createGroupButtons(groupList, events) {
     btn.setAttribute("id", groupName);
     btn.setAttribute("value", index);
     btn.style.marginBottom = "8px";
-    btn.onclick = function(element) {
+    btn.onclick = function (element) {
       selectedGroup = element.target.id;
       console.log("selected group: " + selectedGroup);
 
@@ -163,7 +162,7 @@ function createEventButtons(events) {
 
   displayEvents.forEach((event, index) => {
     //record all event type
-    if(allEventTypes.indexOf(event.type) === -1 && (event.type.indexOf("小組") === -1 || event.type === selectedGroup)) {
+    if (allEventTypes.indexOf(event.type) === -1 && (event.type.indexOf("小組") === -1 || event.type === selectedGroup)) {
       allEventTypes.push(event.type);
 
       //create time button
@@ -173,7 +172,7 @@ function createEventButtons(events) {
       btn.setAttribute("id", event.type);
       btn.setAttribute("value", index);
       btn.style.marginBottom = "8px";
-      btn.onclick = function(element) {
+      btn.onclick = function (element) {
         selectedFilter = element.target.id;
         console.log("selected filter: " + selectedFilter);
 
@@ -220,16 +219,16 @@ function createTableHead(events) {
   const filteredEvents = events.filter(event => allEventTypes.indexOf(event.type) > -1).reverse();
 
   filteredEvents.forEach((event) => {
-    if(selectedFilter === defaultType) {
+    if (selectedFilter === defaultType) {
       //all event type included
       let th = document.createElement('th');
-      th.innerHTML = event.timestring.substr(4,2) + '/' + event.timestring.substr(6,2) + '<br>' + event.type;
+      th.innerHTML = event.timestring.substr(4, 2) + '/' + event.timestring.substr(6, 2) + '<br>' + event.type;
       headerRow1.appendChild(th);
     } else {
-        //only show selected type
-        if(event.type === selectedFilter) {
+      //only show selected type
+      if (event.type === selectedFilter) {
         let th = document.createElement('th');
-        th.innerHTML = event.timestring.substr(4,2) + '/' + event.timestring.substr(6,2) + '<br>' + event.type;
+        th.innerHTML = event.timestring.substr(4, 2) + '/' + event.timestring.substr(6, 2) + '<br>' + event.type;
         headerRow1.appendChild(th);
       }
     }
@@ -244,7 +243,7 @@ function createTableBodyByEvent(events) {
 
   //filter relative member
   let filteredMembers = [];
-  if(selectedGroup.indexOf("小組") > -1) {
+  if (selectedGroup.indexOf("小組") > -1) {
     //is one group only
     filteredMembers = allMembersRaw.filter(group => group.groupName === selectedGroup)[0].groupMember;
   } else {
@@ -258,24 +257,23 @@ function createTableBodyByEvent(events) {
   //create table body
   filteredMembers.forEach((member, idx_row) => {
     let bodyRow = body.insertRow(idx_row);
-    if(selectedFilter === defaultType) {
+    if (selectedFilter === defaultType) {
       //show all events
       eventsWithFirstColumn = [{}, ...filteredEvents];
       eventsWithFirstColumn.forEach((event, idx_column) => {
-        if(idx_column === 0) {
+        if (idx_column === 0) {
           //name column
           let th = document.createElement('th');
           th.innerHTML = member;
           bodyRow.appendChild(th);
         } else {
           //data column
-          let bodyCell  = bodyRow.insertCell(idx_column);
+          let bodyCell = bodyRow.insertCell(idx_column);
           const isAtendee = event.attendee.indexOf(member) > -1 ? true : false;
-          if(isAtendee) {
+          if (isAtendee) {
             bodyCell.innerHTML = "<i class=\"large green checkmark icon\"></i>";
             bodyCell.style.backgroundColor = "lightgreen";
-          }
-          else bodyCell.innerHTML = "";
+          } else bodyCell.innerHTML = "";
         }
       });
     } else {
@@ -283,24 +281,22 @@ function createTableBodyByEvent(events) {
       let filteredTypeEvents = filteredEvents.filter(event => event.type === selectedFilter);
       eventsWithFirstColumn = [{}, ...filteredTypeEvents];
       eventsWithFirstColumn.forEach((event, idx_column) => {
-        if(idx_column === 0) {
+        if (idx_column === 0) {
           //name column
           let th = document.createElement('th');
           th.innerHTML = member;
           bodyRow.appendChild(th);
         } else {
           //data column
-          let bodyCell  = bodyRow.insertCell(idx_column);
+          let bodyCell = bodyRow.insertCell(idx_column);
           const isAtendee = event.attendee.indexOf(member) > -1 ? true : false;
-          if(isAtendee) {
+          if (isAtendee) {
             bodyCell.innerHTML = "<i class=\"large green checkmark icon\"></i>";
             bodyCell.style.backgroundColor = "lightgreen";
-          }
-          else bodyCell.innerHTML = "";
+          } else bodyCell.innerHTML = "";
         }
       });
     }
-    
+
   });
 }
-
