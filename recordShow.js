@@ -121,8 +121,7 @@ function createGroupButtons(groupList, events) {
   if (groupList.length > 0) selectedGroup = groupList[0];
 
   //filter 講員 group
-  const filteredGroup = groupList.filter(group => group.groupName !== "講員")
-  console.log("filteredGroup" + JSON.stringify(filteredGroup))
+  const filteredGroup = groupList.filter(group => group !== "講員")
 
   filteredGroup.forEach((groupName, index) => {
     //create time button
