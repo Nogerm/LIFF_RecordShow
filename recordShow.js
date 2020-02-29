@@ -161,7 +161,7 @@ function createEventButtons(events) {
     timeContainer.removeChild(timeContainer.firstChild);
   }
   allEventTypes = [...globalEvents, selectedGroup];
-  if (globalEvents.findIndex(item => item === selectedGroup) === -1) selectedFilter = defaultType;
+  if (allEventTypes.findIndex(item => item === selectedFilter) === -1) selectedFilter = defaultType;
   const displayEvents = [defaultType, ...allEventTypes];
 
   displayEvents.forEach((typeName, index) => {
