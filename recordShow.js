@@ -1,5 +1,6 @@
 const hostURL = "https://script.google.com/macros/s/AKfycbyQwaNfRrnyBB4kCOvdMgUw_o6v8Z_lNUDqjNCT5Uo-dPKBvZ0/exec";
 const liffID = "1653896800-R8Mowq80";
+const defaultGroup = "全部";
 const defaultType = "全部顯示";
 
 var allMembers = [];
@@ -121,7 +122,8 @@ function createGroupButtons(groupList, events) {
   if (groupList.length > 0) selectedGroup = groupList[0];
 
   //filter 講員 group
-  const filteredGroup = groupList.filter(group => group !== "講員")
+  let filteredGroup = groupList.filter(group => group !== "講員")
+  filteredGroup = [defaultGroup, ...filteredGroup];
 
   filteredGroup.forEach((groupName, index) => {
     //create time button
@@ -133,7 +135,7 @@ function createGroupButtons(groupList, events) {
     btn.style.marginBottom = "8px";
     btn.onclick = function (element) {
       selectedGroup = element.target.id;
-      console.log("selected group: " + selectedGroup + JSON.stringify(element.target));
+      console.log("selected group: " + selectedGroup);
 
       //redraw all group buttons
       let children = groupContainer.children;
@@ -160,7 +162,6 @@ function createEventButtons(events) {
   }
   allEventTypes = [...globalEvents, selectedGroup];
   const displayEvents = [defaultType, ...allEventTypes];
-  console.log("displayEvents" + JSON.stringify(displayEvents))
 
   displayEvents.forEach((typeName, index) => {
     //create type button
@@ -219,7 +220,7 @@ function createTableHead(events) {
   const filteredEvents = events.filter(event => allEventTypes.indexOf(event.type) > -1).reverse();
 
   filteredEvents.forEach((event) => {
-    const filteredMembers = allMembersRaw.filter(group => group.groupName === selectedGroup)[0].groupMember;
+    const filteredMembers = selectedGroup === defaultGroup ? allMembers : allMembersRaw.filter(group => group.groupName === selectedGroup)[0].groupMember;
     const filteredAttendeeArray = event.attendee.filter(item => filteredMembers.includes(item))
     const peopleCountStr = event.isSuspend === "V" ? "暫停" : filteredAttendeeArray.length + '人';
     const moneyAmount = event.moneyCount === "" ? "--" : event.moneyCount;
@@ -249,13 +250,7 @@ function createTableBodyByEvent(events) {
   let body = table.createTBody();
 
   //filter relative member
-  let filteredMembers = [];
-  if (globalEvents.indexOf(selectedGroup) === -1) {
-    //is one group only
-    filteredMembers = allMembersRaw.filter(group => group.groupName === selectedGroup)[0].groupMember;
-  } else {
-    filteredMembers = allMembers;
-  }
+  let filteredMembers = selectedGroup === defaultGroup ? allMembers : allMembersRaw.filter(group => group.groupName === selectedGroup)[0].groupMember;
   console.log("filtered members" + JSON.stringify(filteredMembers));
 
   //filter events
