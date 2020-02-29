@@ -160,6 +160,7 @@ function createEventButtons(events) {
   while (timeContainer.firstChild) {
     timeContainer.removeChild(timeContainer.firstChild);
   }
+  if (allEventTypes.findIndex(selectedGroup) === -1) selectedFilter = defaultType;
   allEventTypes = [...globalEvents, selectedGroup];
   const displayEvents = [defaultType, ...allEventTypes];
 
