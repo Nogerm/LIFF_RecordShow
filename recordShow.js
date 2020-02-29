@@ -6,6 +6,7 @@ var allMembers = [];
 var allMembersRaw = [];
 var allEventTypes = [];
 var reportAtendee = [];
+var globalEvents = [];
 
 var selectedFilter = defaultType;
 var selectedGroup = undefined;
@@ -38,6 +39,8 @@ window.onload = function (e) {
   );
 
   console.log("height: " + window.innerHeight);
+  let tableContainer = document.getElementById("table-container");
+  tableContainer.setAttribute("max-width", window.innerWidth);
 }
 
 function showSegmentLoading() {
@@ -70,6 +73,7 @@ function initializeApp(profile) {
           allMembers = allMembers.concat(group.groupMember);
         });
         console.log("allMembers: " + allMembers);
+        globalEvents = response.data.globalEvent;
 
         //create group list select buttons
         createGroupButtons(response.data.groupName, response.data.eventTime);
@@ -116,23 +120,27 @@ function createGroupButtons(groupList, events) {
   const groupContainer = document.getElementById("group-container");
   if (groupList.length > 0) selectedGroup = groupList[0];
 
-  groupList.forEach((groupName, index) => {
+  //filter 講員 group
+  const filteredGroup = groupList.filter(group => group.groupName !== "講員")
+  console.log("filteredGroup" + JSON.stringify(filteredGroup))
+
+  filteredGroup.forEach((groupName, index) => {
     //create time button
     let btn = document.createElement("button");
     btn.innerHTML = groupName;
-    btn.setAttribute("class", (selectedGroup === groupName) ? "ui primary button" : "ui primary basic button");
+    btn.setAttribute("class", (selectedGroup === groupName) ? "ui teal button" : "ui teal basic button");
     btn.setAttribute("id", groupName);
     btn.setAttribute("value", index);
     btn.style.marginBottom = "8px";
     btn.onclick = function (element) {
       selectedGroup = element.target.id;
-      console.log("selected group: " + selectedGroup);
+      console.log("selected group: " + selectedGroup + JSON.stringify(element.target));
 
       //redraw all group buttons
       let children = groupContainer.children;
       for (var i = 0; i < children.length; i++) {
         let button = children[i];
-        button.className = (button.id === selectedGroup) ? "ui primary button" : "ui primary basic button";
+        button.className = (button.id === selectedGroup) ? "ui teal button" : "ui teal basic button";
       }
 
       //re-create table body
@@ -151,46 +159,38 @@ function createEventButtons(events) {
   while (timeContainer.firstChild) {
     timeContainer.removeChild(timeContainer.firstChild);
   }
-  allEventTypes = [];
+  allEventTypes = [...globalEvents, selectedGroup];
+  const displayEvents = [defaultType, ...allEventTypes];
+  console.log("displayEvents" + JSON.stringify(displayEvents))
 
-  //create dummy event "all"
-  const dummyType = {
-    timestring: undefined,
-    type: defaultType
-  }
-  const displayEvents = [dummyType, ...events];
+  displayEvents.forEach((typeName, index) => {
+    //create type button
+    let btn = document.createElement("button");
+    btn.innerHTML = typeName;
+    btn.setAttribute("class", (selectedFilter === typeName) ? "ui primary button" : "ui primary basic button");
+    btn.setAttribute("id", typeName);
+    btn.setAttribute("value", index);
+    btn.style.marginBottom = "8px";
+    btn.onclick = function (element) {
+      console.log("element: " + element);
+      selectedFilter = element.target.id;
+      console.log("selected filter: " + selectedFilter);
 
-  displayEvents.forEach((event, index) => {
-    //record all event type
-    if (allEventTypes.indexOf(event.type) === -1 && (event.type.indexOf("小組") === -1 || event.type === selectedGroup)) {
-      allEventTypes.push(event.type);
-
-      //create time button
-      let btn = document.createElement("button");
-      btn.innerHTML = event.type;
-      btn.setAttribute("class", (selectedFilter === event.type) ? "ui primary button" : "ui primary basic button");
-      btn.setAttribute("id", event.type);
-      btn.setAttribute("value", index);
-      btn.style.marginBottom = "8px";
-      btn.onclick = function (element) {
-        selectedFilter = element.target.id;
-        console.log("selected filter: " + selectedFilter);
-
-        //redraw all time buttons
-        let children = timeContainer.children;
-        for (var i = 0; i < children.length; i++) {
-          let button = children[i];
-          button.className = (button.id === selectedFilter) ? "ui primary button" : "ui primary basic button";
-        }
-
-        //re-create table body
-        clearTable();
-        createTableHead(events);
-        createTableBodyByEvent(events);
-        setTableMaxHeight();
+      //redraw all time buttons
+      let children = timeContainer.children;
+      for (var i = 0; i < children.length; i++) {
+        let button = children[i];
+        button.className = (button.id === selectedFilter) ? "ui primary button" : "ui primary basic button";
       }
-      timeContainer.appendChild(btn);
+
+      //re-create table body
+      clearTable();
+      createTableHead(events);
+      createTableBodyByEvent(events);
+      setTableMaxHeight();
     }
+    timeContainer.appendChild(btn);
+
   });
   console.log("allEventTypes" + JSON.stringify(allEventTypes));
 }
@@ -219,16 +219,20 @@ function createTableHead(events) {
   const filteredEvents = events.filter(event => allEventTypes.indexOf(event.type) > -1).reverse();
 
   filteredEvents.forEach((event) => {
+    const filteredMembers = allMembersRaw.filter(group => group.groupName === selectedGroup)[0].groupMember;
+    const filteredAttendeeArray = event.attendee.filter(item => filteredMembers.includes(item))
+    console.log("filteredAttendeeArray" + JSON.stringify(filteredAttendeeArray))
+    const peopleCountStr = event.isSuspend === "V" ? "暫停" : filteredAttendeeArray.length + '人';
     if (selectedFilter === defaultType) {
       //all event type included
       let th = document.createElement('th');
-      th.innerHTML = event.timestring.substr(4, 2) + '/' + event.timestring.substr(6, 2) + '<br>' + event.type;
+      th.innerHTML = event.timestring.substr(4, 2) + '/' + event.timestring.substr(6, 2) + '<br>' + event.type + '<br>(' + peopleCountStr + ')';
       headerRow1.appendChild(th);
     } else {
       //only show selected type
       if (event.type === selectedFilter) {
         let th = document.createElement('th');
-        th.innerHTML = event.timestring.substr(4, 2) + '/' + event.timestring.substr(6, 2) + '<br>' + event.type;
+        th.innerHTML = event.timestring.substr(4, 2) + '/' + event.timestring.substr(6, 2) + '<br>' + event.type + '<br>(' + peopleCountStr + ')';
         headerRow1.appendChild(th);
       }
     }
@@ -243,7 +247,7 @@ function createTableBodyByEvent(events) {
 
   //filter relative member
   let filteredMembers = [];
-  if (selectedGroup.indexOf("小組") > -1) {
+  if (globalEvents.indexOf(selectedGroup) === -1) {
     //is one group only
     filteredMembers = allMembersRaw.filter(group => group.groupName === selectedGroup)[0].groupMember;
   } else {
@@ -270,7 +274,10 @@ function createTableBodyByEvent(events) {
           //data column
           let bodyCell = bodyRow.insertCell(idx_column);
           const isAtendee = event.attendee.indexOf(member) > -1 ? true : false;
-          if (isAtendee) {
+          const isSuspend = event.isSuspend === "V" ? true : false;
+          if (isSuspend) {
+            bodyCell.style.backgroundColor = "lightgrey"
+          } else if (isAtendee) {
             bodyCell.innerHTML = "<i class=\"large green checkmark icon\"></i>";
             bodyCell.style.backgroundColor = "lightgreen";
           } else bodyCell.innerHTML = "";
@@ -290,7 +297,10 @@ function createTableBodyByEvent(events) {
           //data column
           let bodyCell = bodyRow.insertCell(idx_column);
           const isAtendee = event.attendee.indexOf(member) > -1 ? true : false;
-          if (isAtendee) {
+          const isSuspend = event.isSuspend === "V" ? true : false;
+          if (isSuspend) {
+            bodyCell.style.backgroundColor = "lightgrey"
+          } else if (isAtendee) {
             bodyCell.innerHTML = "<i class=\"large green checkmark icon\"></i>";
             bodyCell.style.backgroundColor = "lightgreen";
           } else bodyCell.innerHTML = "";

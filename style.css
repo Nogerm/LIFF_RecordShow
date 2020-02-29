@@ -1,19 +1,21 @@
-
 .table-container {
-  max-width: 400px;
   overflow: scroll;
 }
 
 thead th {
-  position: -webkit-sticky; /* for Safari */
+  position: -webkit-sticky;
+  /* for Safari */
   position: sticky;
   top: 0;
-  min-width: 80px;
+  min-width: 75px;
   z-index: 1;
+  background: steelblue;
+  color: #FFF;
 }
 
 tbody th {
-  position: -webkit-sticky; /* for Safari */
+  position: -webkit-sticky;
+  /* for Safari */
   position: sticky;
   left: 0;
   z-index: 1;
@@ -22,11 +24,6 @@ tbody th {
 thead th:first-child {
   left: 0;
   z-index: 2;
-}
-
-thead th {
-  background: steelblue;
-  color: #FFF;
 }
 
 tbody th {
