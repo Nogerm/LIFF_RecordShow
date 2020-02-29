@@ -213,6 +213,7 @@ function createTableHead(events) {
   let headerRow1 = header.insertRow(0);
   let th1 = document.createElement('th');
   th1.innerHTML = "組員";
+  th1.style.verticalAlign = "middle";
   headerRow1.appendChild(th1);
 
   //filter events
@@ -221,18 +222,21 @@ function createTableHead(events) {
   filteredEvents.forEach((event) => {
     const filteredMembers = allMembersRaw.filter(group => group.groupName === selectedGroup)[0].groupMember;
     const filteredAttendeeArray = event.attendee.filter(item => filteredMembers.includes(item))
-    console.log("filteredAttendeeArray" + JSON.stringify(filteredAttendeeArray))
     const peopleCountStr = event.isSuspend === "V" ? "暫停" : filteredAttendeeArray.length + '人';
+    const moneyAmount = event.moneyCount === "" ? "--" : event.moneyCount;
+    const moneyCountStr = event.needMoneyCount ? '<br>$ ' + moneyAmount : '<br>';
     if (selectedFilter === defaultType) {
       //all event type included
       let th = document.createElement('th');
-      th.innerHTML = event.timestring.substr(4, 2) + '/' + event.timestring.substr(6, 2) + '<br>' + event.type + '<br>(' + peopleCountStr + ')';
+      th.style.verticalAlign = "baseline";
+      th.innerHTML = event.timestring.substr(4, 2) + '/' + event.timestring.substr(6, 2) + '<br>' + event.type + '<br>(' + peopleCountStr + ')' + moneyCountStr;
       headerRow1.appendChild(th);
     } else {
       //only show selected type
       if (event.type === selectedFilter) {
         let th = document.createElement('th');
-        th.innerHTML = event.timestring.substr(4, 2) + '/' + event.timestring.substr(6, 2) + '<br>' + event.type + '<br>(' + peopleCountStr + ')';
+        th.style.verticalAlign = "baseline";
+        th.innerHTML = event.timestring.substr(4, 2) + '/' + event.timestring.substr(6, 2) + '<br>' + event.type + '<br>(' + peopleCountStr + ')' + moneyCountStr;
         headerRow1.appendChild(th);
       }
     }
