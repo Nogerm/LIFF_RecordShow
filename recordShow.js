@@ -1,4 +1,4 @@
-const hostURL = "https://script.google.com/macros/s/AKfycbyQwaNfRrnyBB4kCOvdMgUw_o6v8Z_lNUDqjNCT5Uo-dPKBvZ0/exec";
+const hostURL = "https://script.google.com/macros/s/AKfycbxdvC35B9r92bQkUJssfUh5fLzbmy4CXGqCu9SoCPp8UxEy2rdRbfHmO7hVbG8PwrVB/exec";
 const liffID = "1653896800-R8Mowq80";
 const defaultGroup = "全部";
 const defaultType = "全部顯示";
